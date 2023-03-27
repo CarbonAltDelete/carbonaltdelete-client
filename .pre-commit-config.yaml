@@ -2,7 +2,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.2
+    rev: v2.2.4
     hooks:
       - id: codespell
         additional_dependencies:
@@ -17,52 +17,32 @@ repos:
       - id: check-ast
       - id: check-added-large-files
       - id: debug-statements
-      #   - id: detect-aws-credentials
       - id: name-tests-test
         args: [ "--pytest-test-first" ]
         exclude: "fixtures.py"
       - id: requirements-txt-fixer
-#  - repo: https://github.com/pycqa/pydocstyle
-#    rev: 6.3.0  # pick a git hash / tag to point to
-#    hooks:
-#      - id: pydocstyle
-#        args: [ "--ignore=D100,D212,D413" ]
-#        stages: [ "push" ]
   - repo: https://github.com/asottile/add-trailing-comma
     rev: v2.4.0
     hooks:
       - id: add-trailing-comma
         args: [ "--py36-plus" ]
-  #-   repo: https://github.com/PyCQA/isort
-  #    rev: 5.11.4
-  #    hooks:
-  #    -   id: isort
-  #-   repo: https://github.com/PyCQA/autoflake
-  #    rev: v2.0.0
-  #    hooks:
-  #    -   id: autoflake
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
   - repo: https://github.com/PyCQA/flake8
     rev: 6.0.0
     hooks:
       - id: flake8
-  #-   repo: https://github.com/PyCQA/bandit
-  #    rev: 1.7.4
-  #    hooks:
-  #    -   id: bandit
-  #-   repo: https://github.com/asottile/dead
-  #    rev: v1.5.0
-  #    hooks:
-  #    -   id: dead
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.5
+    hooks:
+      - id: bandit
+  - repo: https://github.com/asottile/dead
+    rev: v1.5.0
+    hooks:
+      - id: dead
   - repo: https://github.com/psf/black
     rev: 23.1.0
     hooks:
       - id: black
-#  - repo: local
-#    hooks:
-#      - id: pytest-check
-#        name: pytest
-#        entry: pytest
-#        language: system
-#        pass_filenames: false
-#        always_run: true
-#        stages: [ "push" ]

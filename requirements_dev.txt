@@ -1,10 +1,14 @@
-# Package management
-pip
-setuptools
-wheel
-
-requests
-
-# Development
 black
 flake8
+# Package management
+pip
+pre-commit
+
+# Development
+pytest-dotenv
+
+
+
+requests
+setuptools
+wheel
