@@ -1,0 +1,10 @@
+# Package management
+pip
+setuptools
+wheel
+
+requests
+
+# Development
+black
+flake8
