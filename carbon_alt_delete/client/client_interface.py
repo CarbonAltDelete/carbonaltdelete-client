@@ -15,5 +15,5 @@ class ClientInterface(abc.ABC):
 
     def list(
         self,
-    ) -> list[dict] | type[NotImplementedError]:
-        return NotImplementedError
+    ) -> list[dict]:
+        raise NotImplementedError

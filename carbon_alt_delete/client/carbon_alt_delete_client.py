@@ -1,9 +1,11 @@
 from http import HTTPStatus
 
 import requests
+from requests.models import Response
 
-from carbon_alt_delete.client.abort import abort
+from carbon_alt_delete.client.exceptions import ClientException
 from carbon_alt_delete.interfaces.company_interface import CompanyInterface
+from carbon_alt_delete.interfaces.measurement_interface import MeasurementInterface
 from carbon_alt_delete.interfaces.reporting_period_interface import ReportingPeriodInterface
 
 
@@ -19,7 +21,7 @@ class CarbonAltDeleteClient:
         self.password = password
         self.client_company = client_company
         if api_base_url is None:
-            self.api_base_url = "http://localhost:5000"
+            self.api_base_url = "https://cad-backend-production.herokuapp.com"
         else:
             self.api_base_url = api_base_url
 
@@ -27,6 +29,7 @@ class CarbonAltDeleteClient:
         self._authentication_token: str | None = None
 
         self.companies: CompanyInterface = CompanyInterface(self)
+        self.measurements: MeasurementInterface = MeasurementInterface(self)
         self.reporting_periods: ReportingPeriodInterface = ReportingPeriodInterface(self)
 
         # config
@@ -43,9 +46,8 @@ class CarbonAltDeleteClient:
             timeout=self.timeout,
         )
         if response.status_code != HTTPStatus.OK:
-            abort(status_code=response.status_code, detail=response.content)
             self._authentication_token = None
-            return
+            raise ClientException(response=response)
 
         self._authentication_token = response.json().get("accessToken", None)
 
@@ -70,9 +72,9 @@ class CarbonAltDeleteClient:
             timeout=self.timeout,
         )
         if response.status_code != HTTPStatus.OK:
-            abort(status_code=response.status_code, detail=response.content)
             self._authentication_token = None
-            return
+            raise ClientException(response=response)
+
         self._authentication_token = response.json().get("accessToken", None)
 
     @property
@@ -85,3 +87,19 @@ class CarbonAltDeleteClient:
     @property
     def api_version(self) -> str:
         return self._api_version
+
+    # CRUD
+    def delete(self, url_suffix: str, json: dict = None) -> Response:
+        url = f"{self.api_base_url}/api/{self.api_version}/{url_suffix}"
+        response = requests.delete(
+            url,
+            headers={
+                "Authorization": self.authentication_token,
+            },
+            timeout=self.timeout,
+            json=json if json is not None else {},
+        )
+        if response.status_code != HTTPStatus.OK:
+            raise ClientException(response=response)
+
+        return response

@@ -2,8 +2,8 @@ from http import HTTPStatus
 
 import requests
 
-from carbon_alt_delete.client.abort import abort
 from carbon_alt_delete.client.client_interface import ClientInterface
+from carbon_alt_delete.client.exceptions import ClientException
 
 
 class CompanyInterface(ClientInterface):
@@ -19,5 +19,5 @@ class CompanyInterface(ClientInterface):
             timeout=self.client.timeout,
         )
         if response.status_code != HTTPStatus.OK:
-            return abort(status_code=response.status_code, detail=response.content)
+            raise ClientException(response=response)
         return response.json()
