@@ -2,13 +2,17 @@
 # Package management
 pip
 pre-commit
+pydantic[email]
 
 # Development
 pytest-dotenv
 
-
-
+# Package
+python-dotenv
+python-jose
 requests
+
+
 # Code linting
 ruff
 setuptools

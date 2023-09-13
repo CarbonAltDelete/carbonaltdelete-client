@@ -1,6 +1,9 @@
 venv
+venv-test
 
 **/__pycache__
+*.egg-info
+.ruff_cache
 
 .idea
 .env
