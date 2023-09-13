@@ -4,4 +4,4 @@ venv
 
 .idea
 .env
-/usage/measurements.txt
+/usage/*.txt

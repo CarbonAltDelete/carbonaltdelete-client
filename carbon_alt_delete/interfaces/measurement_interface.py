@@ -1,9 +1,9 @@
 from uuid import UUID
 
-from carbon_alt_delete.client.client_interface import ClientInterface
+from carbon_alt_delete.client.model_interface import ModelInterface
 
 
-class MeasurementInterface(ClientInterface):
+class MeasurementInterface(ModelInterface):
     def delete(
         self,
         measurement_id: UUID | str,

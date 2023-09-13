@@ -1,5 +1,4 @@
-black
-flake8
+
 # Package management
 pip
 pre-commit
@@ -10,5 +9,7 @@ pytest-dotenv
 
 
 requests
+# Code linting
+ruff
 setuptools
 wheel

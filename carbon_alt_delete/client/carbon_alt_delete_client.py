@@ -1,12 +1,17 @@
+import logging
 from http import HTTPStatus
+from uuid import UUID
 
 import requests
+from jose import jwt
 from requests.models import Response
 
+from carbon_alt_delete.accounts.accounts_module_interface import AccountsModuleInterface
+from carbon_alt_delete.accounts.schemas.company import Company
+from carbon_alt_delete.accounts.schemas.user import User
 from carbon_alt_delete.client.exceptions import ClientException
-from carbon_alt_delete.interfaces.company_interface import CompanyInterface
-from carbon_alt_delete.interfaces.measurement_interface import MeasurementInterface
-from carbon_alt_delete.interfaces.reporting_period_interface import ReportingPeriodInterface
+
+logger = logging.getLogger(__name__)
 
 
 class CarbonAltDeleteClient:
@@ -14,34 +19,37 @@ class CarbonAltDeleteClient:
         self,
         email: str,
         password: str,
-        client_company: str,
-        api_base_url: str | None = None,
+        server: str | None = None,
     ):
-        self.email = email
-        self.password = password
-        self.client_company = client_company
-        if api_base_url is None:
-            self.api_base_url = "https://cad-backend-production.herokuapp.com"
-        else:
-            self.api_base_url = api_base_url
+        self._email = email
+        self._password = password
 
-        self._api_version = "v1.0"
-        self._authentication_token: str | None = None
+        self._server = server
 
-        self.companies: CompanyInterface = CompanyInterface(self)
-        self.measurements: MeasurementInterface = MeasurementInterface(self)
-        self.reporting_periods: ReportingPeriodInterface = ReportingPeriodInterface(self)
+        self.accounts: AccountsModuleInterface = AccountsModuleInterface(self)
 
         # config
         self.timeout = 15000
 
+        # token info
+
+        self._authentication_token: str | None = None
+        self._token_type: str | None = None
+        self._user: User | None = None
+        self._company: Company | None = None
+        self._client_company: Company | None = None
+
+    @property
+    def server(self) -> str:
+        return self._server
+
     def authenticate(self):
-        url = f"{self.api_base_url}/api/{self.api_version}/accounts/auth"
+        url = f"{self.server}/api/auth/token"
         response = requests.post(
             url,
-            json={
-                "email": self.email,
-                "password": self.password,
+            data={
+                "username": self._email,
+                "password": self._password,
             },
             timeout=self.timeout,
         )
@@ -49,25 +57,24 @@ class CarbonAltDeleteClient:
             self._authentication_token = None
             raise ClientException(response=response)
 
-        self._authentication_token = response.json().get("accessToken", None)
+        self._authentication_token = response.json().get("access_token", None)
+        self._token_type = response.json().get("token_type", None)
 
-        companies = self.companies.list()
-        company = [c for c in companies if c["name"] == self.client_company][0]
-
-        self._switch(company_id=company["id"])
+        self._get_token_info()
+        self.print_authentication_status()
 
     def disconnect(self):
         self._authentication_token = None
 
-    def _switch(self, company_id: str):
-        url = f"{self.api_base_url}/api/{self.api_version}/accounts/companies/switch"
+    def switch(self, company_id: UUID):
+        url = f"{self.server}/api/auth/token/switch"
         response = requests.post(
             url,
             headers={
                 "Authorization": self.authentication_token,
             },
             json={
-                "companyId": company_id,
+                "companyId": str(company_id),
             },
             timeout=self.timeout,
         )
@@ -75,22 +82,51 @@ class CarbonAltDeleteClient:
             self._authentication_token = None
             raise ClientException(response=response)
 
-        self._authentication_token = response.json().get("accessToken", None)
+        self._authentication_token = response.json().get("access_token", None)
+        self._token_type = response.json().get("token_type", None)
+
+        self._get_token_info()
+        self.print_authentication_status()
 
     @property
     def authentication_token(self) -> str | None:
         if self._authentication_token is not None:
-            return f"Bearer {self._authentication_token}"
+            return f"{self._token_type} {self._authentication_token}"
         else:
             return None
 
-    @property
-    def api_version(self) -> str:
-        return self._api_version
-
     # CRUD
-    def delete(self, url_suffix: str, json: dict = None) -> Response:
-        url = f"{self.api_base_url}/api/{self.api_version}/{url_suffix}"
+    def post(self, url: str, json: dict = None) -> Response:
+        logger.debug(f"POST {url}")
+        response = requests.post(
+            url,
+            headers={
+                "Authorization": self.authentication_token,
+            },
+            timeout=self.timeout,
+            json=json if json is not None else {},
+        )
+        if response.status_code != HTTPStatus.OK:
+            raise ClientException(response=response)
+
+        return response
+
+    def get(self, url: str) -> Response:
+        logger.debug(f"GET {url}")
+        response = requests.get(
+            url,
+            headers={
+                "Authorization": self.authentication_token,
+            },
+            timeout=self.timeout,
+        )
+        if response.status_code != HTTPStatus.OK:
+            raise ClientException(response=response)
+
+        return response
+
+    def delete(self, url: str, json: dict = None) -> Response:
+        logger.debug(f"DELETE {url}")
         response = requests.delete(
             url,
             headers={
@@ -103,3 +139,41 @@ class CarbonAltDeleteClient:
             raise ClientException(response=response)
 
         return response
+
+    @property
+    def user(self) -> User:
+        if self._user:
+            return self._user
+        raise Exception("User not set")
+
+    @property
+    def company(self) -> Company:
+        if self._company:
+            return self._company
+        raise Exception("Company not set")
+
+    @property
+    def client_company(self) -> Company | None:
+        return self._client_company
+
+    def print_authentication_status(self):
+        print("=" * 80)
+        print("Carbon+Alt+Delete Client")
+        print("-" * 80)
+        print(f"Server:     {self.server}")
+        print(f"Status:     {'Connected' if self.authentication_token else 'Missing Token'}")
+        print("-" * 80)
+        print(f"User:       {self.user.first_name} {self.user.last_name} <{self.user.email}>")
+        print(f"Company:    {self.company.name}")
+        print(f"Client:     {self.client_company.name if self.client_company else '-'}")
+        print("=" * 80)
+
+    def _get_token_info(self):
+        token_data = jwt.get_unverified_claims(self._authentication_token)
+        user_id = token_data.get("userId", None)
+        company_id = token_data.get("com", None)
+
+        self._user = self.accounts.users.one(id=UUID(hex=user_id))
+        self._company = self.accounts.companies.one(id=self._user.company_id)
+        if company_id:
+            self._client_company = self.accounts.companies.one(id=UUID(hex=company_id))
