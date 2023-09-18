@@ -10,6 +10,10 @@ from carbon_alt_delete.accounts.accounts_module_interface import AccountsModuleI
 from carbon_alt_delete.accounts.schemas.company import Company
 from carbon_alt_delete.accounts.schemas.user import User
 from carbon_alt_delete.client.exceptions import ClientException
+from carbon_alt_delete.organizational_units.organizational_units_module_interface import (
+    OrganizationalUnitsModuleInterface,
+)
+from carbon_alt_delete.reporting_periods.reporting_periods_module_interface import ReportingPeriodsModuleInterface
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +31,8 @@ class CarbonAltDeleteClient:
         self._server = server
 
         self.accounts: AccountsModuleInterface = AccountsModuleInterface(self)
+        self.organizational_units: OrganizationalUnitsModuleInterface = OrganizationalUnitsModuleInterface(self)
+        self.reporting_periods: ReportingPeriodsModuleInterface = ReportingPeriodsModuleInterface(self)
 
         # config
         self.timeout = 15000

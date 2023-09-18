@@ -2,8 +2,8 @@ import os
 
 from dotenv import load_dotenv
 
-from carbon_alt_delete.client import connect
 from carbon_alt_delete.client.carbon_alt_delete_client import CarbonAltDeleteClient
+from carbon_alt_delete.client.connect import connect
 
 
 def list_all_companies():
@@ -27,9 +27,20 @@ def list_all_companies():
             print(c)
 
         print("\nOne company")
-        print(client.accounts.companies.one(name="Carbon+Alt+Delete"))
+        print(client.accounts.companies.one(name="Carbon+Alt+Delete", is_consulting_company=False))
 
         client.switch(client_company_id)
+
+        print("\nReporting periods")
+        for r in client.reporting_periods.reporting_periods.all():
+            print(r)
+
+        print("\nOrganizational Units")
+        for r in client.organizational_units.organizational_units.all():
+            print(r)
+
+        print("\nRoot Organizational Unit")
+        print(client.organizational_units.organizational_units.root_organizational_unit())
 
 
 if __name__ == "__main__":

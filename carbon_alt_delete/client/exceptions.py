@@ -10,4 +10,7 @@ class ClientException(Exception):
     ):
         super().__init__()
         self.response = response
-        print(f"[{response.status_code} - {HTTPStatus(response.status_code).name}]: {response.content}")
+        print(
+            f"{response.url} - [{response.status_code} - {HTTPStatus(response.status_code).name}]: "
+            f"{str(response.content)}",
+        )
