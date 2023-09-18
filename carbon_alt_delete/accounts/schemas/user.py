@@ -2,6 +2,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, EmailStr
 
+from carbon_alt_delete.accounts.schemas.user_status import UserStatus
+
 
 class User(BaseModel):
     id: UUID
@@ -12,3 +14,4 @@ class User(BaseModel):
     is_admin: bool = Field(alias="isAdmin")
     is_readonly: bool = Field(alias="isReadonly")
     is_consultant: bool = Field(alias="isConsultant")
+    status: UserStatus

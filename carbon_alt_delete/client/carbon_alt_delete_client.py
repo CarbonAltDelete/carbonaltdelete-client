@@ -10,6 +10,7 @@ from carbon_alt_delete.accounts.accounts_module_interface import AccountsModuleI
 from carbon_alt_delete.accounts.schemas.company import Company
 from carbon_alt_delete.accounts.schemas.user import User
 from carbon_alt_delete.client.exceptions import ClientException
+from carbon_alt_delete.keys.keys_module_interface import KeysModuleInterface
 from carbon_alt_delete.organizational_units.organizational_units_module_interface import (
     OrganizationalUnitsModuleInterface,
 )
@@ -21,16 +22,12 @@ logger = logging.getLogger(__name__)
 class CarbonAltDeleteClient:
     def __init__(
         self,
-        email: str,
-        password: str,
         server: str | None = None,
     ):
-        self._email = email
-        self._password = password
-
         self._server = server
 
         self.accounts: AccountsModuleInterface = AccountsModuleInterface(self)
+        self.keys: KeysModuleInterface = KeysModuleInterface(self)
         self.organizational_units: OrganizationalUnitsModuleInterface = OrganizationalUnitsModuleInterface(self)
         self.reporting_periods: ReportingPeriodsModuleInterface = ReportingPeriodsModuleInterface(self)
 
@@ -49,22 +46,48 @@ class CarbonAltDeleteClient:
     def server(self) -> str:
         return self._server
 
-    def authenticate(self):
+    def authenticate_email_password(self, email: str, password: str):
         url = f"{self.server}/api/auth/token"
         response = requests.post(
             url,
             data={
-                "username": self._email,
-                "password": self._password,
+                "username": email,
+                "password": password,
             },
             timeout=self.timeout,
         )
         if response.status_code != HTTPStatus.OK:
             self._authentication_token = None
-            raise ClientException(response=response)
+            raise ClientException(
+                response=response,
+                method="POST",
+            )
 
         self._authentication_token = response.json().get("access_token", None)
         self._token_type = response.json().get("token_type", None)
+
+        self._get_token_info()
+        self.print_authentication_status()
+
+    def authenticate_api_key_secret(self, api_key: str, secret: str):
+        url = f"{self.server}/api/keys/v1/api/auth"
+        response = requests.post(
+            url,
+            json={
+                "apiKey": api_key,
+                "secret": secret,
+            },
+            timeout=self.timeout,
+        )
+        if response.status_code != HTTPStatus.OK:
+            self._authentication_token = None
+            raise ClientException(
+                response=response,
+                method="POST",
+            )
+
+        self._authentication_token = response.json().get("accessToken", None)
+        self._token_type = response.json().get("tokenType", None)
 
         self._get_token_info()
         self.print_authentication_status()
@@ -86,7 +109,10 @@ class CarbonAltDeleteClient:
         )
         if response.status_code != HTTPStatus.OK:
             self._authentication_token = None
-            raise ClientException(response=response)
+            raise ClientException(
+                response=response,
+                method="POST",
+            )
 
         self._authentication_token = response.json().get("access_token", None)
         self._token_type = response.json().get("token_type", None)
@@ -113,7 +139,10 @@ class CarbonAltDeleteClient:
             json=json if json is not None else {},
         )
         if response.status_code != HTTPStatus.OK:
-            raise ClientException(response=response)
+            raise ClientException(
+                response=response,
+                method="POST",
+            )
 
         return response
 
