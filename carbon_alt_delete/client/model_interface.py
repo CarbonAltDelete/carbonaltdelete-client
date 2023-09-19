@@ -32,12 +32,15 @@ class ModelInterface(Generic[T]):
         response = self.client.get(url)
         self._set_all(response)
 
-    def _set_all(self, response, key: str = "id"):
+    def _set_all(self, response, key_field: str = "id"):
         self._state.clear()
-        self._state.update({UUID(hex=r[key]): self._member_class(**r) for r in response.json()})
+        self._state.update({r[key_field]: self._member_class(**r) for r in response.json()})
 
-    def _upsert_one(self, response, key: str = "id"):
-        self._state.update({UUID(hex=response.json()[key]): self._member_class(**response.json())})
+    def _upsert_one(self, response, key_field: str = "id"):
+        self._state.update({response.json()[key_field]: self._member_class(**response.json())})
+
+    def _select_one(self, key: UUID) -> T:
+        return self._state[key]
 
     def create(self, url: str, **kwargs) -> T:
         if url is None:
@@ -47,13 +50,13 @@ class ModelInterface(Generic[T]):
             json=kwargs,
         )
         if not kwargs.get("skip_state", False):
-            self._upsert_one(response, kwargs.get("key", "id"))
-            return self.one(**kwargs)
+            self._upsert_one(response, kwargs.get("key_field", "id"))
+            return self._select_one(response.json()[kwargs.get("key_field", "id")])
         else:
             return self._member_class(**response.json())
 
-    def all(self, **kwargs) -> list[T]:
-        if not self._state:
+    def all(self, refresh: bool = False, **kwargs) -> list[T]:
+        if not self._state or refresh:
             self.fetch_all()
         return list(filter(lambda x: all([getattr(x, k) == v for k, v in kwargs.items()]), self._state.values()))
 

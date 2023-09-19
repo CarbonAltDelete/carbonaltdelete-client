@@ -11,3 +11,7 @@ class Company(BaseModel):
     is_consulting_company: bool = Field(alias="isConsultingCompany")
     is_demo_company: bool = Field(alias="isDemoCompany")
     available_client_companies: NonNegativeInt | None = Field(alias="availableClientCompanies")
+
+
+class CompanyCreate(BaseModel):
+    name: str

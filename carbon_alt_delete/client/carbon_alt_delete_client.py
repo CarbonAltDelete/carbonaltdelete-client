@@ -9,12 +9,14 @@ from requests.models import Response
 from carbon_alt_delete.accounts.accounts_module_interface import AccountsModuleInterface
 from carbon_alt_delete.accounts.schemas.company import Company
 from carbon_alt_delete.accounts.schemas.user import User
+from carbon_alt_delete.activities.activities_module_interface import ActivitiesModuleInterface
 from carbon_alt_delete.client.exceptions import ClientException
 from carbon_alt_delete.keys.keys_module_interface import KeysModuleInterface
 from carbon_alt_delete.organizational_units.organizational_units_module_interface import (
     OrganizationalUnitsModuleInterface,
 )
 from carbon_alt_delete.reporting_periods.reporting_periods_module_interface import ReportingPeriodsModuleInterface
+from carbon_alt_delete.results.results_module_interface import ResultsModuleInterface
 
 logger = logging.getLogger(__name__)
 
@@ -27,9 +29,11 @@ class CarbonAltDeleteClient:
         self._server = server
 
         self.accounts: AccountsModuleInterface = AccountsModuleInterface(self)
+        self.activities: ActivitiesModuleInterface = ActivitiesModuleInterface(self)
         self.keys: KeysModuleInterface = KeysModuleInterface(self)
         self.organizational_units: OrganizationalUnitsModuleInterface = OrganizationalUnitsModuleInterface(self)
         self.reporting_periods: ReportingPeriodsModuleInterface = ReportingPeriodsModuleInterface(self)
+        self.results: ResultsModuleInterface = ResultsModuleInterface(self)
 
         # config
         self.timeout = 15000
@@ -153,6 +157,25 @@ class CarbonAltDeleteClient:
             headers={
                 "Authorization": self.authentication_token,
             },
+            timeout=self.timeout,
+        )
+        if response.status_code != HTTPStatus.OK:
+            raise ClientException(response=response)
+
+        return response
+
+    def put(
+        self,
+        url: str,
+        json: dict = None,
+    ) -> Response:
+        logger.debug(f"PUT {url}")
+        response = requests.put(
+            url,
+            headers={
+                "Authorization": self.authentication_token,
+            },
+            json=json if json is not None else {},
             timeout=self.timeout,
         )
         if response.status_code != HTTPStatus.OK:

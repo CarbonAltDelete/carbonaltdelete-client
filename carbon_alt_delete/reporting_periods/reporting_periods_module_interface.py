@@ -1,5 +1,5 @@
 from carbon_alt_delete.client.module_interface import ModuleInterface
-from carbon_alt_delete.reporting_periods.reporting_periods_model_interface import ReportingPeriodModelInterface
+from carbon_alt_delete.reporting_periods.reporting_period_model_interface import ReportingPeriodModelInterface
 
 
 class ReportingPeriodsModuleInterface(ModuleInterface):
