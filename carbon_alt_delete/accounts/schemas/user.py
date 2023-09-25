@@ -2,7 +2,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, EmailStr, ConfigDict
 
-from carbon_alt_delete.accounts.schemas.user_status import UserStatus
+from carbon_alt_delete.accounts.enums.user_status import UserStatus
 
 
 class User(BaseModel):

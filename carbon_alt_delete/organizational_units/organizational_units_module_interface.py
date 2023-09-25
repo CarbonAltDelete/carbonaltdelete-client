@@ -1,5 +1,5 @@
 from carbon_alt_delete.client.module_interface import ModuleInterface
-from carbon_alt_delete.organizational_units.organizational_units_model_interface import OrganizationalUnitModelInterface
+from carbon_alt_delete.organizational_units.organizational_unit_model_interface import OrganizationalUnitModelInterface
 
 
 class OrganizationalUnitsModuleInterface(ModuleInterface):

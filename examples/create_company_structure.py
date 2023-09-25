@@ -9,8 +9,8 @@ from carbon_alt_delete.client.connect import connect
 def create_company_structure():
     client: CarbonAltDeleteClient
     with connect(
-        api_key=os.getenv("API_KEY"),
-        secret=os.getenv("SECRET"),
+        email=os.getenv("EMAIL"),
+        password=os.getenv("PASSWORD"),
         server=os.getenv("SERVER"),
     ) as client:
         # Create Company and switch to it
@@ -59,7 +59,9 @@ def create_company_structure():
         users = client.accounts.users.all(refresh=True, company_id=company.id, is_consultant=False)
         for user in users:
             redirect_key = client.keys.redirect.create(
-                user_id=user.id, api_key=os.getenv("API_KEY"), secret=os.getenv("SECRET"),
+                user_id=user.id,
+                api_key=os.getenv("API_KEY"),
+                secret=os.getenv("SECRET"),
             )
             print(
                 f"\t{user.first_name} {user.last_name} ({user.email}) [{user.status}] "

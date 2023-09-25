@@ -8,3 +8,5 @@ venv-test
 .idea
 .env
 /usage/*.txt
+/examples/*.pdf
+/examples/*.xlsx

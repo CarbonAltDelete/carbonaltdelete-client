@@ -2,7 +2,7 @@ import os
 
 from dotenv import load_dotenv
 
-from carbon_alt_delete.accounts.schemas.user_status import UserStatus
+from carbon_alt_delete.accounts.enums.user_status import UserStatus
 from carbon_alt_delete.client.carbon_alt_delete_client import CarbonAltDeleteClient
 from carbon_alt_delete.client.connect import connect
 
@@ -14,7 +14,16 @@ def redirect_client_user():
         secret=os.getenv("SECRET"),
         server=os.getenv("SERVER"),
     ) as client:
-        print("\nClient users", len(client.accounts.users.all(is_consultant=False, status=UserStatus.ACTIVE)))
+        print(
+            "\nClient users",
+            len(
+                client.accounts.users.all(
+                    is_consultant=False,
+                    status=UserStatus.ACTIVE,
+                    refresh=True,
+                ),
+            ),
+        )
         for c in client.accounts.users.all(is_consultant=False, status=UserStatus.ACTIVE):
             print(c)
 

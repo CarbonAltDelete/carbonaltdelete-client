@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from carbon_alt_delete.accounts.schemas.company import Company, CompanyCreate
 from carbon_alt_delete.client.model_interface import ModelInterface
 
@@ -12,6 +14,15 @@ class CompanyModelInterface(ModelInterface):
     ):
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/companies"
         super().fetch_all(url)
+
+    def fetch_one(
+        self,
+        id: UUID,
+        url: str = None,
+        **kwargs,
+    ):
+        url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/companies/{id}"
+        super().fetch_one(url)
 
     def create(self, url: str = None, **kwargs):
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/companies"

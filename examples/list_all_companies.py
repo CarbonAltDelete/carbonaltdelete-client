@@ -14,7 +14,7 @@ def list_all_companies():
         server=os.getenv("SERVER"),
     ) as client:
         print("\nAll companies")
-        for c in client.accounts.companies.all():
+        for c in client.accounts.companies.all(refresh=True):
             print(c)
 
         print("\nClient companies")

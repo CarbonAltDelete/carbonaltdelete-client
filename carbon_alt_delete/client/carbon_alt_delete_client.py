@@ -12,10 +12,12 @@ from carbon_alt_delete.accounts.schemas.user import User
 from carbon_alt_delete.activities.activities_module_interface import ActivitiesModuleInterface
 from carbon_alt_delete.client.exceptions import ClientException
 from carbon_alt_delete.keys.keys_module_interface import KeysModuleInterface
+from carbon_alt_delete.measurements.measurements_module_interface import MeasurementsModuleInterface
 from carbon_alt_delete.organizational_units.organizational_units_module_interface import (
     OrganizationalUnitsModuleInterface,
 )
 from carbon_alt_delete.reporting_periods.reporting_periods_module_interface import ReportingPeriodsModuleInterface
+from carbon_alt_delete.reports.reports_module_interface import ReportsModuleInterface
 from carbon_alt_delete.results.results_module_interface import ResultsModuleInterface
 
 logger = logging.getLogger(__name__)
@@ -31,8 +33,10 @@ class CarbonAltDeleteClient:
         self.accounts: AccountsModuleInterface = AccountsModuleInterface(self)
         self.activities: ActivitiesModuleInterface = ActivitiesModuleInterface(self)
         self.keys: KeysModuleInterface = KeysModuleInterface(self)
+        self.measurements: MeasurementsModuleInterface = MeasurementsModuleInterface(self)
         self.organizational_units: OrganizationalUnitsModuleInterface = OrganizationalUnitsModuleInterface(self)
         self.reporting_periods: ReportingPeriodsModuleInterface = ReportingPeriodsModuleInterface(self)
+        self.reports: ReportsModuleInterface = ReportsModuleInterface(self)
         self.results: ResultsModuleInterface = ResultsModuleInterface(self)
 
         # config
@@ -150,10 +154,11 @@ class CarbonAltDeleteClient:
 
         return response
 
-    def get(self, url: str) -> Response:
+    def get(self, url: str, params: dict = None) -> Response:
         logger.debug(f"GET {url}")
         response = requests.get(
             url,
+            params=params if params is not None else {},
             headers={
                 "Authorization": self.authentication_token,
             },

@@ -13,6 +13,15 @@ class UserModelInterface(ModelInterface):
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/users"
         super().fetch_all(url)
 
+    def fetch_one(
+        self,
+        id: UUID,
+        url: str = None,
+        **kwargs,
+    ):
+        url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/users/{id}"
+        super().fetch_one(url)
+
     def create(self, url: str = None, **kwargs):
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/users"
         try:
