@@ -8,6 +8,26 @@ from carbon_alt_delete.measurements.enums.date_granularity import DateGranularit
 
 class Measurement(BaseModel):
     id: UUID
+    description: str | None
+
+    input_type: str | None = Field(alias="inputType")
+    keyword: str | None
+    detail: str | None = Field(alias="attribute")
+
+    activity_category_id: UUID | None = Field(alias="activityCategoryId")
+    reporting_period_id: UUID = Field(alias="reportingPeriodId")
+    organizational_unit_id: UUID = Field(alias="organizationalUnitId")
+
+    date_granularity: DateGranularity = DateGranularity.YEAR
+    show_as_range: bool = Field(alias="showAsRange")
+    start_date: date = Field(alias="startDate")
+    end_date: date = Field(alias="endDate")
+
+    dataset_id: UUID | None = Field(alias="datasetId")
+
+    volume: float | None
+    unit: str | None
+    emissions: float | None
 
 
 class MeasurementCreate(BaseModel):

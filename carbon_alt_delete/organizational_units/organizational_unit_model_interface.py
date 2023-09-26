@@ -9,7 +9,7 @@ class OrganizationalUnitModelInterface(ModelInterface[OrganizationalUnit]):
     def __init__(self, client, module):
         super().__init__(client, module, OrganizationalUnit)
 
-    def fetch_all(self, url: str = None):
+    def fetch_all(self, url: str = None, **kwargs):
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/organizational-units"
         super().fetch_all(url)
 

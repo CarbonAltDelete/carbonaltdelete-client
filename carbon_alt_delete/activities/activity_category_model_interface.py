@@ -6,7 +6,7 @@ class ActivityCategoryModelInterface(ModelInterface[ActivityCategory]):
     def __init__(self, client, module):
         super().__init__(client, module, ActivityCategory)
 
-    def fetch_all(self, url: str = None):
+    def fetch_all(self, url: str = None, **kwargs):
         # TODO: replace with FAST API endpoint if refactored
         # url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/activity-categories"
         url = f"{self.client.server}/api/v1.0/activities/categories"
