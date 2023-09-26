@@ -17,7 +17,12 @@ class ReportModelInterface(ModelInterface[Report]):
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/reports"
         super().fetch_all(url)
 
-    def fetch_one(self, id: UUID, url: str = None, **kwargs):
+    def fetch_one(
+        self,
+        id: UUID,
+        url: str = None,
+        **kwargs,
+    ):
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/reports/{id}"
         return super().fetch_one(url, **kwargs)
 
