@@ -17,6 +17,7 @@ class Measurement(BaseModel):
     activity_category_id: UUID | None = Field(alias="activityCategoryId")
     reporting_period_id: UUID = Field(alias="reportingPeriodId")
     organizational_unit_id: UUID = Field(alias="organizationalUnitId")
+    traded_from_organizational_unit_id: UUID | None = Field(alias="tradedFromOrganizationalUnitId")
 
     date_granularity: DateGranularity = DateGranularity.YEAR
     show_as_range: bool = Field(alias="showAsRange")
@@ -24,6 +25,8 @@ class Measurement(BaseModel):
     end_date: date = Field(alias="endDate")
 
     dataset_id: UUID | None = Field(alias="datasetId")
+    dataset_version_id: UUID | None = Field(alias="datasetVersionId")
+    emission_factor_id: UUID | None = Field(alias="emissionFactorId")
 
     volume: float | None
     unit: str | None
@@ -43,6 +46,7 @@ class MeasurementCreate(BaseModel):
     activity_category_id: UUID | None = None
     reporting_period_id: UUID
     organizational_unit_id: UUID
+    traded_from_organizational_unit_id: UUID | None = Field(alias="tradedFromOrganizationalUnitId")
 
     date_granularity: DateGranularity = DateGranularity.YEAR
     show_as_range: bool = False
@@ -50,8 +54,14 @@ class MeasurementCreate(BaseModel):
     end_date: date
 
     dataset_id: UUID | None = None
+    dataset_version_id: UUID | None = None
+    emission_factor_id: UUID | None = None
 
     model_config = ConfigDict(
         from_attributes=True,
         populate_by_name=True,
     )
+
+
+class MeasurementUpdate(MeasurementCreate):
+    id: UUID

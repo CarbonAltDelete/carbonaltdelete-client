@@ -1,5 +1,5 @@
 from carbon_alt_delete.client.model_interface import ModelInterface
-from carbon_alt_delete.measurements.schemas.measurement import Measurement, MeasurementCreate
+from carbon_alt_delete.measurements.schemas.measurement import Measurement, MeasurementCreate, MeasurementUpdate
 
 
 class MeasurementModelInterface(ModelInterface[Measurement]):
@@ -35,3 +35,15 @@ class MeasurementModelInterface(ModelInterface[Measurement]):
         measurement = self.one(id=measurement.id, refresh=True)
 
         return measurement
+
+    def update(
+        self,
+        url: str = None,
+        **kwargs,
+    ):
+        url = f"{self.client.server}/api/v1.0/measurements/v2/{kwargs.get('id')}"
+
+        return super().update(
+            url,
+            **MeasurementUpdate(**kwargs).model_dump(by_alias=True, mode="json"),
+        )

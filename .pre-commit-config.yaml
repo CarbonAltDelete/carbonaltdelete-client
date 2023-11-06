@@ -2,13 +2,14 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.5
+    rev: v2.2.6
     hooks:
       - id: codespell
         additional_dependencies:
           - tomli
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -21,34 +22,20 @@ repos:
         args: [ "--pytest-test-first" ]
         exclude: "fixtures.py"
       - id: requirements-txt-fixer
+
+  - repo: https://github.com/psf/black
+    # Black
+    rev: '23.10.1'
+    hooks:
+      - id: black
+
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    # Ruff
+    rev: 'v0.1.4'
+    hooks:
+      - id: ruff
+
   - repo: https://github.com/asottile/add-trailing-comma
     rev: v3.1.0
     hooks:
       - id: add-trailing-comma
-        args: [ "--py36-plus" ]
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
-    # Ruff version.
-    rev: 'v0.0.290'
-    hooks:
-      - id: ruff
-
-#  - repo: https://github.com/PyCQA/isort
-#    rev: 5.12.0
-#    hooks:
-#      - id: isort
-#  - repo: https://github.com/PyCQA/flake8
-#    rev: 6.1.0
-#    hooks:
-#      - id: flake8
-#  - repo: https://github.com/PyCQA/bandit
-#    rev: 1.7.5
-#    hooks:
-#      - id: bandit
-#  - repo: https://github.com/asottile/dead
-#    rev: v1.5.2
-#    hooks:
-#      - id: dead
-#  - repo: https://github.com/psf/black
-#    rev: 23.9.1
-#    hooks:
-#      - id: black
