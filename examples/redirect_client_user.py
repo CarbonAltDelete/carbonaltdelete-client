@@ -29,6 +29,8 @@ def redirect_client_user():
 
         print("\nFirst client user")
         client_user = client.accounts.users.first(is_consultant=False, status=UserStatus.ACTIVE)
+        if not client_user:
+            exit()
         print("\t", client_user.email)
 
         redirect_key = client.keys.redirect.create(

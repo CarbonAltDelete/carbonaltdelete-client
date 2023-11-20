@@ -70,13 +70,17 @@ class ModelInterface(Generic[T]):
             self.fetch_all(**kwargs)
         return list(
             filter(
-                lambda x: all([getattr(x, k) == v for k, v in kwargs.items() if hasattr(x, k)]), self._state.values(),
+                lambda x: all([getattr(x, k) == v for k, v in kwargs.items() if hasattr(x, k)]),
+                self._state.values(),
             ),
         )
 
-    def first(self, **kwargs) -> T:
-        result = self.all(**kwargs)
-        return result[0]
+    def first(self, **kwargs) -> T | None:
+        try:
+            result = self.all(**kwargs)
+            return result[0]
+        except IndexError:
+            return None
 
     def last(self, **kwargs) -> T:
         result = self.all(**kwargs)
@@ -89,7 +93,7 @@ class ModelInterface(Generic[T]):
             kwargs["refresh"] = False
 
         result = self.all(**kwargs)
-        assert len(result) == 1
+        assert len(result) == 1, f"Expected 1 result, got {len(result)}"
         return result[0]
 
     def update(self, url: str = None, **kwargs) -> T:
