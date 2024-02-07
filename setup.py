@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="Carbon+Alt+Delete Client",
-    version="2023.09.1",
+    version="2024.02.1",
     description="Client SDK to communicate with the Carbon+Alt+Delete API",
     url="https://github.com/CarbonAltDelete/carbonaltdelete-client",
     author="Carbon+Alt+Delete",
@@ -13,5 +13,6 @@ setup(
         "pydantic[email]",
         "python-jose",
         "requests",
+        "rich",
     ],
 )

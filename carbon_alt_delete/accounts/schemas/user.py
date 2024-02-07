@@ -13,6 +13,7 @@ class User(BaseModel):
     email: EmailStr | None
     is_admin: bool = Field(alias="isAdmin")
     is_readonly: bool = Field(alias="isReadonly")
+    is_readonly_limited: bool = Field(alias="isReadonlyLimited")
     is_consultant: bool = Field(alias="isConsultant")
     status: UserStatus
 
@@ -24,6 +25,7 @@ class UserCreate(BaseModel):
     email: EmailStr | None
     is_admin: bool = Field(alias="isAdmin", default=False)
     is_readonly: bool = Field(alias="isReadonly", default=False)
+    is_readonly_limited: bool = Field(alias="isReadonlyLimited", default=False)
 
     model_config = ConfigDict(
         populate_by_name=True,

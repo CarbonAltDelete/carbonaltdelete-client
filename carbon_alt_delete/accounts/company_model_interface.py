@@ -14,7 +14,7 @@ class CompanyModelInterface(ModelInterface):
         **kwargs,
     ):
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/companies"
-        super().fetch_all(url)
+        super().fetch_all(url, **kwargs)
 
     def fetch_one(
         self,
@@ -23,11 +23,12 @@ class CompanyModelInterface(ModelInterface):
         **kwargs,
     ):
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/companies/{id}"
-        super().fetch_one(url)
+        super().fetch_one(url, **kwargs)
 
     def create(self, url: str = None, **kwargs):
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/companies"
         return super().create(
             url,
             **CompanyCreate.model_validate(kwargs).model_dump(by_alias=True, mode="json"),
+            **kwargs,
         )

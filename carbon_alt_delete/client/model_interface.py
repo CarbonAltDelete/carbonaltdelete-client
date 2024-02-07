@@ -27,16 +27,16 @@ class ModelInterface(Generic[T]):
     def module(self) -> ModuleInterface:
         return self._module
 
-    def fetch_all(self, url: str = None, **kwargs):
+    def fetch_all(self, url: str = None, params={}, **kwargs):
         if url is None:
             raise NotImplementedError
-        response = self.client.get(url)
+        response = self.client.get(url, params=params, **kwargs)
         self._set_all(response.json())
 
     def fetch_one(self, url: str = None, **kwargs):
         if url is None:
             raise NotImplementedError
-        response = self.client.get(url)
+        response = self.client.get(url, **kwargs)
         self._upsert_one(response.json())
 
     def _set_all(self, response: list[dict], key_field: str = "id"):

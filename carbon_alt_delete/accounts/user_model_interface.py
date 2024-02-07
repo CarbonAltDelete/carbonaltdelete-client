@@ -11,7 +11,7 @@ class UserModelInterface(ModelInterface):
 
     def fetch_all(self, url: str = None, **kwargs):
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/users"
-        super().fetch_all(url)
+        super().fetch_all(url, **kwargs)
 
     def fetch_one(
         self,
@@ -20,7 +20,7 @@ class UserModelInterface(ModelInterface):
         **kwargs,
     ):
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/users/{id}"
-        super().fetch_one(url)
+        super().fetch_one(url, **kwargs)
 
     def create(self, url: str = None, **kwargs):
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/users"

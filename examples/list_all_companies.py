@@ -21,13 +21,14 @@ def list_all_companies():
         for c in client.accounts.companies.all(is_consulting_company=False):
             print(c)
             client_company_id = c.id
+            client_company_name = c.name
 
         print("\nDemo companies")
         for c in client.accounts.companies.all(is_demo_company=True):
             print(c)
 
         print("\nOne company")
-        print(client.accounts.companies.one(name="Carbon+Alt+Delete", is_consulting_company=False))
+        print(client.accounts.companies.one(name=client_company_name, is_consulting_company=False))
 
         client.switch(client_company_id)
 

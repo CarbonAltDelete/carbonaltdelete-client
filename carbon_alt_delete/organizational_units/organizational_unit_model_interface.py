@@ -11,7 +11,7 @@ class OrganizationalUnitModelInterface(ModelInterface[OrganizationalUnit]):
 
     def fetch_all(self, url: str = None, **kwargs):
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/organizational-units"
-        super().fetch_all(url)
+        super().fetch_all(url, **kwargs)
 
     def create(self, url: str = None, **kwargs):
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/organizational-units"

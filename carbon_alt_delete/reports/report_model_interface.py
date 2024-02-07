@@ -13,9 +13,9 @@ class ReportModelInterface(ModelInterface[Report]):
     def __init__(self, client, module):
         super().__init__(client, module, Report)
 
-    def fetch_all(self, url: str = None):
+    def fetch_all(self, url: str = None, **kwargs):
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/reports"
-        super().fetch_all(url)
+        super().fetch_all(url, **kwargs)
 
     def fetch_one(
         self,

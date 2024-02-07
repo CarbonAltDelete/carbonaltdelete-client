@@ -6,11 +6,11 @@ class ReportingPeriodModelInterface(ModelInterface[ReportingPeriod]):
     def __init__(self, client, module):
         super().__init__(client, module, ReportingPeriod)
 
-    def fetch_all(self, url: str = None):
+    def fetch_all(self, url: str = None, **kwargs):
         # TODO: replace with FAST API endpoint if refactored
         # url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/reporting-periods"
         url = f"{self.client.server}/api/v1.0/reporting-periods"
-        super().fetch_all(url)
+        super().fetch_all(url, **kwargs)
 
     def create(self, url: str = None, **kwargs):
         url = f"{self.client.server}/api/v1.0/reporting-periods"

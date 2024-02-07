@@ -8,9 +8,9 @@ class RedirectKey(BaseModel):
 
 
 class RedirectKeyCreate(BaseModel):
-    api_key: UUID = Field(serialization_alias="apiKey")
+    api_key: UUID = Field(alias="apiKey")
     secret: str
-    user_id: UUID = Field(serialization_alias="userId")
+    user_id: UUID = Field(alias="userId")
 
     model_config = ConfigDict(
         populate_by_name=True,

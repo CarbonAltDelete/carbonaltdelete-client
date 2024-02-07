@@ -46,7 +46,7 @@ class MeasurementCreate(BaseModel):
     activity_category_id: UUID | None = None
     reporting_period_id: UUID
     organizational_unit_id: UUID
-    traded_from_organizational_unit_id: UUID | None = Field(alias="tradedFromOrganizationalUnitId")
+    traded_from_organizational_unit_id: UUID | None = Field(alias="tradedFromOrganizationalUnitId", default=None)
 
     date_granularity: DateGranularity = DateGranularity.YEAR
     show_as_range: bool = False

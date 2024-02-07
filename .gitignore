@@ -6,7 +6,7 @@ venv-test
 .ruff_cache
 
 .idea
-.env
+*.env
 /usage/*.txt
 /examples/*.pdf
 /examples/*.xlsx

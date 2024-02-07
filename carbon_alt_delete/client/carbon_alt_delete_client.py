@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from http import HTTPStatus
 from uuid import UUID
 
@@ -22,6 +23,7 @@ from carbon_alt_delete.reports.reports_module_interface import ReportsModuleInte
 from carbon_alt_delete.results.results_module_interface import ResultsModuleInterface
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 class CarbonAltDeleteClient:
@@ -48,6 +50,7 @@ class CarbonAltDeleteClient:
 
         self._authentication_token: str | None = None
         self._token_type: str | None = None
+        self._refresh_token: str | None = None
         self._user: User | None = None
         self._company: Company | None = None
         self._client_company: Company | None = None
@@ -75,6 +78,7 @@ class CarbonAltDeleteClient:
 
         self._authentication_token = response.json().get("access_token", None)
         self._token_type = response.json().get("token_type", None)
+        self._refresh_token = response.json().get("refresh_token", None)
 
         self._get_token_info()
         self.print_authentication_status()
@@ -98,6 +102,29 @@ class CarbonAltDeleteClient:
 
         self._authentication_token = response.json().get("accessToken", None)
         self._token_type = response.json().get("tokenType", None)
+        self._refresh_token = response.json().get("refreshToken", None)
+
+        self._get_token_info()
+        self.print_authentication_status()
+
+    def refresh_authentication_token(self):
+        url = f"{self.server}/api/auth/token/refresh"
+        response = requests.get(
+            url,
+            headers={
+                "Authorization": f"{self._token_type} {self._refresh_token}",
+            },
+            timeout=self.timeout,
+        )
+        if response.status_code != HTTPStatus.OK:
+            self._authentication_token = None
+            raise ClientException(
+                response=response,
+                method="GET",
+            )
+
+        self._authentication_token = response.json().get("access_token", None)
+        self._token_type = response.json().get("token_type", None)
 
         self._get_token_info()
         self.print_authentication_status()
@@ -139,6 +166,7 @@ class CarbonAltDeleteClient:
 
     # CRUD
     def post(self, url: str, json: dict = None) -> Response:
+        self._check_refresh()
         logger.debug(f"POST {url}")
         response = requests.post(
             url,
@@ -156,7 +184,10 @@ class CarbonAltDeleteClient:
 
         return response
 
-    def get(self, url: str, params: dict = None) -> Response:
+    def get(self, url: str, params: dict = None, **kwargs) -> Response:
+
+        if kwargs.get("check_refresh", True):
+            self._check_refresh()
         logger.debug(f"GET {url}")
         response = requests.get(
             url,
@@ -176,6 +207,7 @@ class CarbonAltDeleteClient:
         url: str,
         json: dict = None,
     ) -> Response:
+        self._check_refresh()
         logger.debug(f"PUT {url}")
         response = requests.put(
             url,
@@ -191,6 +223,7 @@ class CarbonAltDeleteClient:
         return response
 
     def delete(self, url: str, json: dict = None) -> Response:
+        self._check_refresh()
         logger.debug(f"DELETE {url}")
         response = requests.delete(
             url,
@@ -238,7 +271,16 @@ class CarbonAltDeleteClient:
         user_id = token_data.get("userId", None)
         company_id = token_data.get("com", None)
 
-        self._user = self.accounts.users.one(id=UUID(hex=user_id))
-        self._company = self.accounts.companies.one(id=self._user.company_id)
+        self._user = self.accounts.users.one(id=UUID(hex=user_id), check_refresh=False)
+        self._company = self.accounts.companies.one(id=self._user.company_id, check_refresh=False)
         if company_id:
-            self._client_company = self.accounts.companies.one(id=UUID(hex=company_id))
+            self._client_company = self.accounts.companies.one(id=UUID(hex=company_id), check_refresh=False)
+
+    def _check_refresh(self):
+
+        expiry_time: int | None = jwt.get_unverified_claims(self._authentication_token).get("exp", None)
+        current_time: float = datetime.now().timestamp()
+
+        if expiry_time < current_time + 60:
+            print("expires in less than 1 minute, refreshing token...")
+            self.refresh_authentication_token()
