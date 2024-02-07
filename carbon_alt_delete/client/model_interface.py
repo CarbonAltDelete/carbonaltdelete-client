@@ -27,7 +27,7 @@ class ModelInterface(Generic[T]):
     def module(self) -> ModuleInterface:
         return self._module
 
-    def fetch_all(self, url: str = None):
+    def fetch_all(self, url: str = None, **kwargs):
         if url is None:
             raise NotImplementedError
         response = self.client.get(url)

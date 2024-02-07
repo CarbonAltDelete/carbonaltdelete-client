@@ -11,6 +11,7 @@ class CompanyModelInterface(ModelInterface):
     def fetch_all(
         self,
         url: str = None,
+        **kwargs,
     ):
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/companies"
         super().fetch_all(url)

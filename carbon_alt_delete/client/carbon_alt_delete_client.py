@@ -11,6 +11,7 @@ from carbon_alt_delete.accounts.schemas.company import Company
 from carbon_alt_delete.accounts.schemas.user import User
 from carbon_alt_delete.activities.activities_module_interface import ActivitiesModuleInterface
 from carbon_alt_delete.client.exceptions import ClientException
+from carbon_alt_delete.emission_factors.emission_factors_module_interface import EmissionFactorsModuleInterface
 from carbon_alt_delete.keys.keys_module_interface import KeysModuleInterface
 from carbon_alt_delete.measurements.measurements_module_interface import MeasurementsModuleInterface
 from carbon_alt_delete.organizational_units.organizational_units_module_interface import (
@@ -32,6 +33,7 @@ class CarbonAltDeleteClient:
 
         self.accounts: AccountsModuleInterface = AccountsModuleInterface(self)
         self.activities: ActivitiesModuleInterface = ActivitiesModuleInterface(self)
+        self.emission_factors: EmissionFactorsModuleInterface = EmissionFactorsModuleInterface(self)
         self.keys: KeysModuleInterface = KeysModuleInterface(self)
         self.measurements: MeasurementsModuleInterface = MeasurementsModuleInterface(self)
         self.organizational_units: OrganizationalUnitsModuleInterface = OrganizationalUnitsModuleInterface(self)

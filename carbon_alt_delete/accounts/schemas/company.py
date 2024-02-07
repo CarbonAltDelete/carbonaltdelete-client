@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field, NonNegativeInt
 
 class Company(BaseModel):
     id: UUID
-    name: str
+    name: str | None
     created_at: datetime.date = Field(alias="createdAt")
     is_consulting_company: bool = Field(alias="isConsultingCompany")
     is_demo_company: bool = Field(alias="isDemoCompany")
@@ -14,4 +14,4 @@ class Company(BaseModel):
 
 
 class CompanyCreate(BaseModel):
-    name: str
+    name: str | None
