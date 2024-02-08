@@ -1,7 +1,6 @@
 import os
 
 from dotenv import load_dotenv
-from rich import print
 
 from carbon_alt_delete.client.carbon_alt_delete_client import CarbonAltDeleteClient
 from carbon_alt_delete.client.connect import connect

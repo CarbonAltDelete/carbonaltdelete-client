@@ -7,13 +7,11 @@ class ActivityGroupModelInterface(ModelInterface[ActivityGroup]):
         super().__init__(client, module, ActivityGroup)
 
     def fetch_all(self, url: str = None, **kwargs):
-        # TODO: replace with FAST API endpoint if refactored
-        # url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/activity-categories"
-        url = f"{self.client.server}/api/v1.0/activities/groups"
+        url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/activity-groups"
         super().fetch_all(url, **kwargs)
 
     def create(self, url: str = None, **kwargs):
-        url = f"{self.client.server}/api/v1.0/activities/groups"
+        url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/activity-groups"
         return super().create(
             url,
             **ActivityGroupCreate.model_validate(kwargs).model_dump(by_alias=True, mode="json"),
