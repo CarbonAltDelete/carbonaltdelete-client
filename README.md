@@ -3,7 +3,7 @@
 ## Installation
 
 ```bash
-pip install carbon_alt_delete @ https://github.com/CarbonAltDelete/carbonaltdelete-client
+pip install git+https://github.com/CarbonAltDelete/carbonaltdelete-client
 ```
 
 ## Usage examples
