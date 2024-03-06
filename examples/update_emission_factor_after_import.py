@@ -29,7 +29,8 @@ def update_emission_factor_after_import(file_path: str, sheet_name: str):
             try:
                 dataset_id = UUID(hex=row["DatasetId"])
 
-                measurement = client.measurements.measurements.one(id=UUID(hex=row["Id"]))
+                measurement = client.measurements.measurements.one(id=UUID(hex=row["id"]))
+
                 measurement.dataset_id = dataset_id
                 measurement.dataset_version_id = UUID(hex=row["DatasetVersionId"])
                 measurement.emission_factor_id = UUID(hex=row["EmissionFactorId"])

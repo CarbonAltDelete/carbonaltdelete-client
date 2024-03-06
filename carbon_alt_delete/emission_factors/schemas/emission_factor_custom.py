@@ -1,5 +1,7 @@
 from uuid import UUID
 
+from pydantic import Field
+
 from carbon_alt_delete.emission_factors.schemas.emission_factor import (
     EmissionFactor,
     EmissionFactorCreate,
@@ -8,7 +10,7 @@ from carbon_alt_delete.emission_factors.schemas.emission_factor import (
 
 
 class EmissionFactorCustomCreate(EmissionFactorCreate):
-    dataset_id: UUID
+    dataset_id: UUID = Field(alias="datasetId")
     description: str | None
 
 
@@ -19,4 +21,4 @@ class EmissionFactorCustomUpdate(EmissionFactorUpdate):
 class EmissionFactorCustom(EmissionFactor):
     description: str | None
 
-    company_id: UUID
+    company_id: UUID = Field(alias="companyId")
