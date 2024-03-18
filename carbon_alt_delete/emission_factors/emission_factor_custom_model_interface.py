@@ -8,7 +8,7 @@ class EmissionFactorCustomModelInterface(ModelInterface[EmissionFactorCustom]):
     def __init__(self, client, module):
         super().__init__(client, module, EmissionFactorCustom)
 
-    def create(self, url: str = None, **kwargs):
+    def create(self, url: str = None, **kwargs) -> EmissionFactorCustom:
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/emission-factors"
         response = self.client.post(
             url,
@@ -19,3 +19,7 @@ class EmissionFactorCustomModelInterface(ModelInterface[EmissionFactorCustom]):
             return self._select_one(response.json()["emissionFactor"][kwargs.get("key_field", "id")])
         else:
             return self._member_class(**(response.json()["emissionFactor"]))
+
+    def update(self, **kwargs) -> EmissionFactorCustom:
+        url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/emission-factors/{kwargs['id']}"
+        return super().update(url=url, **kwargs)

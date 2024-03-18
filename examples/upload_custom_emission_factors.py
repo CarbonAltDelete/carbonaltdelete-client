@@ -13,14 +13,14 @@ from carbon_alt_delete.measurements.enums.emission_calculation_type import Emiss
 
 
 def upload_custom_emission_factors(
-    file_path: str,
-    sheet_name: str,
+        file_path: str,
+        sheet_name: str,
 ):
     client: CarbonAltDeleteClient
     with connect(
-        email=os.getenv("EMAIL"),
-        password=os.getenv("PASSWORD"),
-        server=os.getenv("SERVER"),
+            email=os.getenv("EMAIL"),
+            password=os.getenv("PASSWORD"),
+            server=os.getenv("SERVER"),
     ) as client:
 
         dataset = client.emission_factors.datasets.one(
@@ -41,7 +41,8 @@ def upload_custom_emission_factors(
 
             # Single stage emission factor
             if pd.isna(row["Combustion EF (kgCO2e/unit)"]):
-                emission_factor = client.emission_factors.emission_factors_custom.create(
+                continue
+                emission_factor_custom = client.emission_factors.emission_factors_custom.create(
                     dataset_id=str(dataset.id),
                     unit=row["Unit"],
                     attribute=row["Detail"],
@@ -52,33 +53,65 @@ def upload_custom_emission_factors(
                     emission_calculation_type=EmissionCalculationType.DEFAULT,
                     stage=EmissionFactorValueStage.PRINCIPAL,
                 )
-                print("Emission factor", emission_factor)
+                print("Emission factor CUSTOM\n", emission_factor_custom)
 
                 # Get latest emission factor value
                 emission_factor_value = client.emission_factors.emission_factor_values.latest(
-                    emission_factor_id=str(emission_factor.id),
+                    emission_factor_id=emission_factor_custom.id,
                 )
-                emission_factor_value.value_co2eq_aggregated = float(row["Total EF (kgCO2e/unit)"])
+                print(emission_factor_value)
+                emission_factor_value.greenhouse_gases.CO2EQ.factor = float(row["Total EF (kgCO2e/unit)"])
                 client.emission_factors.emission_factor_values.update(
-                    **emission_factor_value.model_dump(),
+                    **emission_factor_value.model_dump(mode="json"),
                 )
 
             # Multi-stage emission factor
             else:
-                emission_factor = client.emission_factors.emission_factors_custom.create(
+                emission_factor_custom = client.emission_factors.emission_factors_custom.create(
                     dataset_id=str(dataset.id),
                     unit=row["Unit"],
                     attribute=row["Detail"],
                     keyword=row["Keyword"],
                     description=str(row["Description"]),
                     reporting_split=ReportingSplit.DEFAULT,
-                    stage_detail=EmissionFactorValueStageDetail.FULL_DETAIL,
+                    stage_detail=EmissionFactorValueStageDetail.NO_DETAIL,
                     emission_calculation_type=EmissionCalculationType.DEFAULT,
                     stage=EmissionFactorValueStage.PRINCIPAL,
                 )
-                print("Emission factor", emission_factor)
-                raise NotImplementedError("Multi stage emission factors not implemented")
-            break
+                emission_factor_custom.stage_detail = EmissionFactorValueStageDetail.FULL_DETAIL
+                emission_factor_custom = client.emission_factors.emission_factors_custom.update(
+                    **emission_factor_custom.model_dump(mode="json"),
+                )
+                print("Emission factor", emission_factor_custom)
+
+                emission_factor_value_set = client.emission_factors.emission_factor_values.latest_set(
+                    emission_factor_id=emission_factor_custom.id, )
+
+                # Principal emission factor
+                emission_factor_value_principal = \
+                [efv for efv in emission_factor_value_set if efv.stage == EmissionFactorValueStage.PRINCIPAL][0]
+                emission_factor_value_principal.greenhouse_gases.CO2EQ.factor = float(
+                    row["Combustion EF (kgCO2e/unit)"])
+                client.emission_factors.emission_factor_values.update(
+                    **emission_factor_value_principal.model_dump(mode="json"),
+                )
+                if not pd.isna(row["Generation EF (kgCO2e/unit)"]):
+                    emission_factor_value_t_d = [efv for efv in emission_factor_value_set if
+                                                 efv.stage == EmissionFactorValueStage.ENERGY_AND_FUEL_GENERATION][0]
+                    emission_factor_value_t_d.greenhouse_gases.CO2EQ.factor = float(
+                        row["Generation EF (kgCO2e/unit)"])
+                    client.emission_factors.emission_factor_values.update(
+                        **emission_factor_value_t_d.model_dump(mode="json"),
+                    )
+                if not pd.isna(row["T&D EF (kgCO2e/unit)"]):
+                    emission_factor_value_t_d = [efv for efv in emission_factor_value_set if
+                                                 efv.stage == EmissionFactorValueStage.ENERGY_AND_FUEL_TRANSMISSION_DISTRIBUTION][
+                        0]
+                    emission_factor_value_t_d.greenhouse_gases.CO2EQ.factor = float(
+                        row["T&D EF (kgCO2e/unit)"])
+                    client.emission_factors.emission_factor_values.update(
+                        **emission_factor_value_t_d.model_dump(mode="json"),
+                    )
 
 
 if __name__ == "__main__":

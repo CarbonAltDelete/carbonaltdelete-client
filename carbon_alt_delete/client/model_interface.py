@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Generic, TypeVar
+from typing import Generic, TYPE_CHECKING, TypeVar
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -45,6 +45,9 @@ class ModelInterface(Generic[T]):
 
     def _upsert_one(self, response: dict, key_field: str = "id"):
         self._state.update({response.get(key_field): self._member_class(**response)})
+
+    def _upsert_many(self, response: list[dict], key_field: str = "id"):
+        self._state.update({r.get(key_field): self._member_class(**r) for r in response})
 
     def _select_one(self, key: UUID) -> T:
         return self._state[key]

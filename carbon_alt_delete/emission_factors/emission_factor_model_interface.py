@@ -1,4 +1,4 @@
-from carbon_alt_delete.client.model_interface import ModelInterface
+from carbon_alt_delete.client.model_interface import ModelInterface, T
 from carbon_alt_delete.emission_factors.schemas.emission_factor import EmissionFactor
 
 
@@ -14,3 +14,5 @@ class EmissionFactorModelInterface(ModelInterface[EmissionFactor]):
         )
         response = self.client.get(url)
         self._upsert_one(response.json()["emissionFactors"][0])
+
+
