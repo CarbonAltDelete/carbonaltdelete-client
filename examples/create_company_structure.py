@@ -91,7 +91,7 @@ def create_company_structure():
             print(f"\t{activity_group.name}")
 
         print("\nResults:")
-        for result in client.results.dashboard.all(params={"organizationUnitId_eq": root.id}):
+        for result in client.results.dashboard.all(params={"organizationUnitId_equals": root.id}):
             print(f"\t{result.activity_category_id}")
 
 

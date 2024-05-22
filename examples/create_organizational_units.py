@@ -4,10 +4,12 @@ import os
 import pandas as pd
 from dotenv import load_dotenv
 from pydantic import BaseModel, field_validator, NonNegativeInt
+from rich.logging import RichHandler
 
 from carbon_alt_delete.client.carbon_alt_delete_client import CarbonAltDeleteClient
 from carbon_alt_delete.client.connect import connect
 
+logging.basicConfig(level=logging.INFO, handlers=[RichHandler(level="NOTSET")])
 logger = logging.getLogger(__name__)
 
 
@@ -33,6 +35,7 @@ def create_company_structure(
         server=os.getenv("SERVER"),
     ) as client:
         # Switch to company
+        logger.info(f"Switching to company {company_name}")
         company = client.accounts.companies.one(name=company_name)
         client.switch(company.id)
 
@@ -40,10 +43,13 @@ def create_company_structure(
         root = client.organizational_units.organizational_units.root_organizational_unit()
 
         # Loop through organizational units and create new if not existing
-        for organizational_unit in organizational_units:
-            logger.info(organizational_unit.name)
-            org_unit = client.organizational_units.organizational_units.first(name=organizational_unit.name)
+        for i, organizational_unit in enumerate(organizational_units):
+            org_unit = client.organizational_units.organizational_units.first(
+                name=organizational_unit.name,
+                position=organizational_unit.position,
+            )
             if org_unit is None:
+                logger.info(f"[{i+1}] Creating {organizational_unit.name}")
                 parent = (
                     root
                     if organizational_unit.parent_name is None
@@ -56,7 +62,7 @@ def create_company_structure(
                     position=organizational_unit.position,
                 )
             else:
-                logger.info(f"Organizational unit {organizational_unit.name} already exists")
+                logger.debug(f"[{i+1} Exists {organizational_unit.name}")
 
         logger.info("\nOrganizational Units:")
         client.organizational_units.organizational_units.print_tree()
@@ -64,11 +70,14 @@ def create_company_structure(
 
 if __name__ == "__main__":
     load_dotenv()
-    df = pd.read_excel(os.getenv("FILE_PATH"))
+    df = pd.read_excel(
+        os.getenv("FILE_PATH"),
+        sheet_name=os.getenv("SHEET_NAME"),
+    )
     list_organizational_units = [
         OrganizationalUnitInput(
-            name=row["Org Unit"],
-            parent_name=row["Parent Company"],
+            name=row["Name"],
+            parent_name=row["Parent"],
             position=row["Position"],
         )
         for _, row in df.iterrows()
