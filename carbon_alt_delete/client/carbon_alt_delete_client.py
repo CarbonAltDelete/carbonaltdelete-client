@@ -56,7 +56,7 @@ class CarbonAltDeleteClient:
         self._client_company: Company | None = None
 
     @property
-    def server(self) -> str:
+    def server(self) -> str | None:
         return self._server
 
     def authenticate_email_password(self, email: str, password: str):
@@ -165,7 +165,7 @@ class CarbonAltDeleteClient:
             return None
 
     # CRUD
-    def post(self, url: str, json: dict = None) -> Response:
+    def post(self, url: str, json: dict | None = None) -> Response:
         self._check_refresh()
         logger.debug(f"POST {url}")
         response = requests.post(
@@ -184,7 +184,7 @@ class CarbonAltDeleteClient:
 
         return response
 
-    def get(self, url: str, params: dict = None, **kwargs) -> Response:
+    def get(self, url: str, params: dict | None = None, **kwargs) -> Response:
 
         if kwargs.get("check_refresh", True):
             self._check_refresh()
@@ -205,7 +205,7 @@ class CarbonAltDeleteClient:
     def put(
         self,
         url: str,
-        json: dict = None,
+        json: dict | None = None,
     ) -> Response:
         self._check_refresh()
         logger.debug(f"PUT {url}")
@@ -222,7 +222,27 @@ class CarbonAltDeleteClient:
 
         return response
 
-    def delete(self, url: str, json: dict = None) -> Response:
+    def patch(
+        self,
+        url: str,
+        json: dict | None = None,
+    ) -> Response:
+        self._check_refresh()
+        logger.debug(f"PATCH {url}")
+        response = requests.patch(
+            url,
+            headers={
+                "Authorization": self.authentication_token,
+            },
+            json=json if json is not None else {},
+            timeout=self.timeout,
+        )
+        if response.status_code != HTTPStatus.OK:
+            raise ClientException(response=response)
+
+        return response
+
+    def delete(self, url: str, json: dict | None = None) -> Response:
         self._check_refresh()
         logger.debug(f"DELETE {url}")
         response = requests.delete(
@@ -281,6 +301,6 @@ class CarbonAltDeleteClient:
         expiry_time: int | None = jwt.get_unverified_claims(self._authentication_token).get("exp", None)
         current_time: float = datetime.now().timestamp()
 
-        if expiry_time < current_time + 60:
+        if expiry_time is None or expiry_time < current_time + 60:
             print("expires in less than 1 minute, refreshing token...")
             self.refresh_authentication_token()

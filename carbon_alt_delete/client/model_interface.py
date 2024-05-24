@@ -1,4 +1,4 @@
-from typing import Generic, TYPE_CHECKING, TypeVar
+from typing import Generic, TYPE_CHECKING, TypeVar, Literal
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -27,13 +27,13 @@ class ModelInterface(Generic[T]):
     def module(self) -> ModuleInterface:
         return self._module
 
-    def fetch_all(self, url: str = None, params={}, **kwargs):
+    def fetch_all(self, url: str | None = None, params={}, **kwargs):
         if url is None:
             raise NotImplementedError
         response = self.client.get(url, params=params, **kwargs)
         self._set_all(response.json())
 
-    def fetch_one(self, url: str = None, **kwargs):
+    def fetch_one(self, url: str | None = None, **kwargs):
         if url is None:
             raise NotImplementedError
         response = self.client.get(url, **kwargs)
@@ -99,13 +99,24 @@ class ModelInterface(Generic[T]):
         assert len(result) == 1, f"Expected 1 result, got {len(result)}"
         return result[0]
 
-    def update(self, url: str = None, **kwargs) -> T:
+    def update(
+        self,
+        url: str | None = None,
+        method: Literal["PATCH", "PUT"] = "PUT",
+        **kwargs,
+    ) -> T:
         if url is None:
             raise NotImplementedError
-        response = self.client.put(
-            url,
-            json=kwargs,
-        )
+        if method == "PATCH":
+            response = self.client.patch(
+                url,
+                json=kwargs,
+            )
+        else:
+            response = self.client.put(
+                url,
+                json=kwargs,
+            )
         self._upsert_one(response.json(), kwargs.get("key_field", "id"))
         return self._state[response.json().get(kwargs.get("key_field", "id"))]
 

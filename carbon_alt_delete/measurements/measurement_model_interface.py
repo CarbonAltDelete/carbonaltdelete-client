@@ -1,3 +1,6 @@
+from typing import Literal
+from uuid import UUID
+
 from carbon_alt_delete.client.model_interface import ModelInterface
 from carbon_alt_delete.measurements.schemas.measurement import Measurement, MeasurementCreate, MeasurementUpdate
 
@@ -6,8 +9,8 @@ class MeasurementModelInterface(ModelInterface[Measurement]):
     def __init__(self, client, module):
         super().__init__(client, module, Measurement)
 
-    def fetch_one(self, url: str = None, **kwargs):
-        url = f"{self.client.server}/api/v1.0/measurements/v2/{kwargs.get('id')}"
+    def fetch_one(self, url: str | None = None, **kwargs):
+        url = f"{self.client.server}/api/measurements/v1/inventory-lines/{kwargs.get('id')}"
         super().fetch_one(url=url, **kwargs)
 
     def create_entry(self, measurement_create: MeasurementCreate) -> Measurement:
@@ -38,12 +41,15 @@ class MeasurementModelInterface(ModelInterface[Measurement]):
 
     def update(
         self,
-        url: str = None,
+        url: str | None = None,
+        method: Literal["PUT"] = "PUT",
         **kwargs,
     ):
-        url = f"{self.client.server}/api/v1.0/measurements/v2/{kwargs.get('id')}"
+        measurement_id: UUID = kwargs.get("id")
+        url = f"{self.client.server}/api/v1.0/measurements/v2/{measurement_id}"
 
         return super().update(
-            url,
+            url=url,
+            method=method,
             **MeasurementUpdate(**kwargs).model_dump(by_alias=True, mode="json"),
         )

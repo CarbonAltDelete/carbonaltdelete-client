@@ -15,6 +15,7 @@ class Measurement(BaseModel):
     detail: str | None = Field(alias="attribute")
 
     activity_category_id: UUID | None = Field(alias="activityCategoryId")
+    parent_activity_category_id: UUID | None = Field(alias="parentActivityCategoryId")
     reporting_period_id: UUID = Field(alias="reportingPeriodId")
     organizational_unit_id: UUID = Field(alias="organizationalUnitId")
     traded_from_organizational_unit_id: UUID | None = Field(alias="tradedFromOrganizationalUnitId")
@@ -27,10 +28,16 @@ class Measurement(BaseModel):
     dataset_id: UUID | None = Field(alias="datasetId")
     dataset_version_id: UUID | None = Field(alias="datasetVersionId")
     emission_factor_id: UUID | None = Field(alias="emissionFactorId")
+    volume_uncertainty_id: UUID | None = Field(alias="volumeUncertaintyId", default=None)
 
     volume: float | None
     unit: str | None
     emissions: float | None
+
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True,
+    )
 
 
 class MeasurementCreate(BaseModel):
@@ -56,6 +63,7 @@ class MeasurementCreate(BaseModel):
     dataset_id: UUID | None = None
     dataset_version_id: UUID | None = None
     emission_factor_id: UUID | None = None
+    volume_uncertainty_id: UUID | None = Field(alias="volumeUncertaintyId", default=None)
 
     model_config = ConfigDict(
         from_attributes=True,
@@ -64,4 +72,4 @@ class MeasurementCreate(BaseModel):
 
 
 class MeasurementUpdate(MeasurementCreate):
-    id: UUID
+    pass

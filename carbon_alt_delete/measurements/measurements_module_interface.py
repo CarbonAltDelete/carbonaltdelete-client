@@ -1,13 +1,14 @@
 from carbon_alt_delete.client.module_interface import ModuleInterface
 from carbon_alt_delete.measurements.formula_term_model_interface import FormulaTermModelInterface
 from carbon_alt_delete.measurements.formula_term_value_model_interface import FormulaTermValueModelInterface
-from carbon_alt_delete.measurements.measurement_model_interface import MeasurementModelInterface
+from carbon_alt_delete.measurements.inventory_line_model_interface import InventoryLineModelInterface
 
 
 class MeasurementsModuleInterface(ModuleInterface):
     def __init__(self, client):
         super().__init__("measurements", "v1")
-        self.measurements: MeasurementModelInterface = MeasurementModelInterface(
+
+        self.inventory_lines: InventoryLineModelInterface = InventoryLineModelInterface(
             client=client,
             module=self,
         )

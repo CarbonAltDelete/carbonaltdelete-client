@@ -8,7 +8,10 @@ from carbon_alt_delete.client.carbon_alt_delete_client import CarbonAltDeleteCli
 from carbon_alt_delete.client.connect import connect
 
 
-def update_emission_factor_after_import(file_path: str, sheet_name: str):
+def update_emission_factor_after_import(
+    file_path: str,
+    sheet_name: str,
+):
     client: CarbonAltDeleteClient
     with connect(
         email=os.getenv("EMAIL"),
