@@ -1,8 +1,9 @@
 from setuptools import setup, find_packages
 
+RELEASE = "v2024.07.1"
 setup(
     name="Carbon+Alt+Delete Client",
-    version="2024.03.1",
+    version=RELEASE[1:],
     description="Client SDK to communicate with the Carbon+Alt+Delete API",
     url="https://github.com/CarbonAltDelete/carbonaltdelete-client",
     author="Carbon+Alt+Delete",
