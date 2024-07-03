@@ -16,4 +16,5 @@ class DatasetType(str, Enum):
 
     BASE = "BASE"
     ECOINVENT = "ECOINVENT"
+    EXIOBASE = "EXIOBASE"
     CUSTOM = "CUSTOM"

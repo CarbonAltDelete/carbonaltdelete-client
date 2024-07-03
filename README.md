@@ -11,7 +11,7 @@ pip install git+https://github.com/CarbonAltDelete/carbonaltdelete-client
 ```
 EMAIL=your_email
 PASSWORD=your_password
-SERVER=https://cad-backend-production.herokuapp.com
+SERVER=https://app.carbonaltdelete.eu
 ```
 
 ```bash

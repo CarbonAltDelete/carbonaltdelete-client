@@ -4,6 +4,7 @@ from uuid import UUID
 from pydantic import BaseModel, Field, ConfigDict
 
 from carbon_alt_delete.reports.enums.report_status import ReportStatus
+from carbon_alt_delete.reports.enums.report_type import ReportType
 
 
 class Report(BaseModel):
@@ -20,7 +21,9 @@ class Report(BaseModel):
 class ReportCreate(BaseModel):
     name: str
     reporting_period_id: UUID = Field(alias="reportingPeriodId")
+    base_reporting_period_id: UUID = Field(alias="baseReportingPeriodId")
     organizational_unit_id: UUID = Field(alias="organizationUnitId")
+    report_type: ReportType = Field(alias="reportType")
 
     model_config = ConfigDict(
         populate_by_name=True,
