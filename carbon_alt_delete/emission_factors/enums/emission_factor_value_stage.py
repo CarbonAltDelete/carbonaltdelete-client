@@ -7,6 +7,8 @@ class EmissionFactorValueStage(str, Enum):
     ENERGY_AND_FUEL_GENERATION = "ENERGY_AND_FUEL_GENERATION"
     ENERGY_AND_FUEL_TRANSMISSION_DISTRIBUTION = "ENERGY_AND_FUEL_TRANSMISSION_DISTRIBUTION"
 
+    COMBUSTION = "COMBUSTION"
+
     @cached_property
     def label(self) -> str:
         return {

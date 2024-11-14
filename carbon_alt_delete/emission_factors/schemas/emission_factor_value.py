@@ -30,7 +30,7 @@ class EmissionFactorValue(EmissionFactorValueUpdate):
 
     unit: str | None
     emission_factor_id: UUID = Field(alias="emissionFactorId")
-    referring_emission_factor_id: UUID | None = Field(alias="referringEmissionFactorId")
+    referring_emission_factor_id: UUID | None = Field(alias="referringEmissionFactorId", default=None)
 
     stage: EmissionFactorValueStage
     emission_calculation_type: EmissionCalculationType = Field(alias="emissionCalculationType")

@@ -15,7 +15,7 @@ class Dataset(BaseModel):
     is_shared: bool = Field(alias="isShared")
     dataset_type: DatasetType = Field(alias="datasetType")
     company_id: UUID | None = Field(alias="companyId")
-    company_name: str | None = Field(alias="companyName")
+    company_name: str | None = Field(alias="companyName", default=None)
 
     class Config:
         from_attributes = True

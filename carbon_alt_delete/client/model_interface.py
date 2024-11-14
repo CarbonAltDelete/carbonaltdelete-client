@@ -1,4 +1,4 @@
-from typing import Generic, TYPE_CHECKING, TypeVar, Literal
+from typing import Generic, TYPE_CHECKING, TypeVar, Literal, Any
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -13,7 +13,12 @@ T = TypeVar("T", bound=BaseModel)
 
 
 class ModelInterface(Generic[T]):
-    def __init__(self, client: "CarbonAltDeleteClient", module: ModuleInterface, member_class: type[T]):
+    def __init__(
+        self,
+        client: "CarbonAltDeleteClient",
+        module: ModuleInterface,
+        member_class: type[T],
+    ):
         self._client = client
         self._module = module
         self._state: dict[UUID, T] = {}
@@ -29,13 +34,13 @@ class ModelInterface(Generic[T]):
 
     def fetch_all(self, url: str | None = None, params={}, **kwargs):
         if url is None:
-            raise NotImplementedError
+            raise NotImplementedError("fetch_all method not implemented")
         response = self.client.get(url, params=params, **kwargs)
         self._set_all(response.json())
 
     def fetch_one(self, url: str | None = None, **kwargs):
         if url is None:
-            raise NotImplementedError
+            raise NotImplementedError("fetch_one method not implemented")
         response = self.client.get(url, **kwargs)
         self._upsert_one(response.json())
 
@@ -47,17 +52,17 @@ class ModelInterface(Generic[T]):
         self._state.update({response.get(key_field): self._member_class(**response)})
 
     def _upsert_many(self, response: list[dict], key_field: str = "id"):
-        self._state.update({r.get(key_field): self._member_class(**r) for r in response})
+        self._state.update({getn(r, key_field): self._member_class(**r) for r in response})
 
     def _select_one(self, key: UUID) -> T:
-        return self._state[key]
+        return getn(self._state, key)
 
     def _delete_one(self, key: UUID):
         del self._state[key]
 
     def create(self, url: str, **kwargs) -> T:
         if url is None:
-            raise NotImplementedError
+            raise NotImplementedError("create method not implemented")
         response = self.client.post(
             url,
             json=kwargs,
@@ -106,7 +111,7 @@ class ModelInterface(Generic[T]):
         **kwargs,
     ) -> T:
         if url is None:
-            raise NotImplementedError
+            raise NotImplementedError("update method not implemented")
         if method == "PATCH":
             response = self.client.patch(
                 url,
@@ -118,15 +123,24 @@ class ModelInterface(Generic[T]):
                 json=kwargs,
             )
         self._upsert_one(response.json(), kwargs.get("key_field", "id"))
-        return self._state[response.json().get(kwargs.get("key_field", "id"))]
+        return self._state[getn(response.json(), kwargs.get("key_field", "id"))]
 
-    def delete(self, url: str, **kwargs) -> DeleteMessage:
+    def delete(self, url: str | None, **kwargs) -> DeleteMessage:
         if url is None:
-            raise NotImplementedError
+            raise NotImplementedError("delete method not implemented")
         response = self.client.delete(
             url,
             json=kwargs,
         )
         delete_message = DeleteMessage(**response.json())
-        self._delete_one(response.json().get(kwargs.get("key_field", "id")))
+        self._delete_one(getn(response.json(), kwargs.get("key_field", "id")))
         return delete_message
+
+
+def getn(d: dict, key: str, delimiter: str = ".") -> Any | None:
+    nested_key = key.split(delimiter)
+    for p in nested_key:
+        if p not in d:
+            return None
+        d = d[p]
+    return d

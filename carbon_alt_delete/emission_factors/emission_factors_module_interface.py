@@ -3,6 +3,7 @@ from carbon_alt_delete.emission_factors.dataset_model_interface import DatasetMo
 from carbon_alt_delete.emission_factors.emission_factor_custom_model_interface import EmissionFactorCustomModelInterface
 from carbon_alt_delete.emission_factors.emission_factor_model_interface import EmissionFactorModelInterface
 from carbon_alt_delete.emission_factors.emission_factor_value_model_interface import EmissionFactorValueModelInterface
+from emission_factors.dataset_version_model_interface import DatasetVersionModelInterface
 
 
 class EmissionFactorsModuleInterface(ModuleInterface):
@@ -10,6 +11,10 @@ class EmissionFactorsModuleInterface(ModuleInterface):
         super().__init__("emission-factors", "v1")
 
         self.datasets: DatasetModelInterface = DatasetModelInterface(
+            client=client,
+            module=self,
+        )
+        self.dataset_versions: DatasetVersionModelInterface = DatasetVersionModelInterface(
             client=client,
             module=self,
         )

@@ -9,6 +9,12 @@ class OrganizationalUnitModelInterface(ModelInterface[OrganizationalUnit]):
     def __init__(self, client, module):
         super().__init__(client, module, OrganizationalUnit)
 
+    def fetch_one(self, url: str = None, **kwargs):
+        url = (
+            f"{self.client.server}/api/{self.module.name}/{self.module.version}/organizational-units/{kwargs.get('id')}"
+        )
+        super().fetch_one(url, **kwargs)
+
     def fetch_all(self, url: str = None, **kwargs):
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/organizational-units"
         super().fetch_all(url, **kwargs)
@@ -19,6 +25,17 @@ class OrganizationalUnitModelInterface(ModelInterface[OrganizationalUnit]):
             url,
             **OrganizationalUnitCreate.model_validate(kwargs).model_dump(by_alias=True, mode="json"),
         )
+
+    def update(self, url: str = None, **kwargs):
+        url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/organizational-units/{kwargs['id']}"
+        return super().update(
+            url,
+            **OrganizationalUnit.model_validate(kwargs).model_dump(by_alias=True, mode="json"),
+        )
+
+    def delete(self, url: str = None, **kwargs):
+        url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/organizational-units/{kwargs['id']}"
+        return super().delete(url)
 
     def root_organizational_unit(self) -> OrganizationalUnit:
         return self.one(parent_organizational_unit_id=None)

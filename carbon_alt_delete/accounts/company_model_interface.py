@@ -10,7 +10,7 @@ class CompanyModelInterface(ModelInterface):
 
     def fetch_all(
         self,
-        url: str = None,
+        url: str | None = None,
         **kwargs,
     ):
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/companies"
@@ -19,7 +19,7 @@ class CompanyModelInterface(ModelInterface):
     def fetch_one(
         self,
         id: UUID,
-        url: str = None,
+        url: str | None = None,
         **kwargs,
     ):
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/companies/{id}"
@@ -30,5 +30,5 @@ class CompanyModelInterface(ModelInterface):
         return super().create(
             url,
             **CompanyCreate.model_validate(kwargs).model_dump(by_alias=True, mode="json"),
-            **kwargs,
+            # **kwargs,
         )

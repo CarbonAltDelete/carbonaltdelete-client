@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from pydantic import BaseModel, Field, ConfigDict
 
 from carbon_alt_delete.measurements.schemas.formula_term import FormulaTerm
@@ -15,9 +17,21 @@ class FormulaTermValuesResponse(BaseModel):
     )
 
 
+class CustomField(BaseModel):
+    field_id: UUID = Field(alias="fieldId")
+    option_id: UUID | None = Field(alias="optionId")
+    measurement_id: UUID = Field(alias="measurementId")
+
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True,
+    )
+
+
 class InventoryLine(BaseModel):
     measurement: Measurement
     formula_term_values: FormulaTermValuesResponse = Field(alias="formulaTermValues")
+    custom_fields: list[CustomField] = Field(alias="customFields", default_factory=list)
 
     model_config = ConfigDict(
         from_attributes=True,
@@ -26,8 +40,9 @@ class InventoryLine(BaseModel):
 
 
 class InventoryLinePatch(BaseModel):
-    measurement: Measurement
+    measurement: Measurement | None = None
     formula_term_values: list[FormulaTermValue] | None = Field(alias="formulaTermValues", default_factory=list)
+    custom_fields: list[CustomField] | None = Field(alias="customFields", default_factory=list)
 
     model_config = ConfigDict(
         from_attributes=True,

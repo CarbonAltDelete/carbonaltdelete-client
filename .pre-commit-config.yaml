@@ -9,7 +9,7 @@ repos:
           - tomli
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v5.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -25,13 +25,13 @@ repos:
 
   - repo: https://github.com/psf/black
     # Black
-    rev: '24.4.2'
+    rev: '24.10.0'
     hooks:
       - id: black
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     # Ruff
-    rev: 'v0.4.5'
+    rev: 'v0.7.3'
     hooks:
       - id: ruff
 
@@ -41,7 +41,7 @@ repos:
       - id: add-trailing-comma
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.10.0
+    rev: v1.13.0
     hooks:
       - id: mypy
         args: [--follow-imports=skip, --ignore-missing-imports, --check-untyped-defs]

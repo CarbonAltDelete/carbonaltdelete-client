@@ -21,6 +21,9 @@ from carbon_alt_delete.organizational_units.organizational_units_module_interfac
 from carbon_alt_delete.reporting_periods.reporting_periods_module_interface import ReportingPeriodsModuleInterface
 from carbon_alt_delete.reports.reports_module_interface import ReportsModuleInterface
 from carbon_alt_delete.results.results_module_interface import ResultsModuleInterface
+from comments.comments_module_interface import CommentsModuleInterface
+from tags.tags_module_interface import TagsModuleInterface
+from uncertainties.uncertainties_module_interface import UncertaintiesModuleInterface
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -35,6 +38,7 @@ class CarbonAltDeleteClient:
 
         self.accounts: AccountsModuleInterface = AccountsModuleInterface(self)
         self.activities: ActivitiesModuleInterface = ActivitiesModuleInterface(self)
+        self.comments: CommentsModuleInterface = CommentsModuleInterface(self)
         self.emission_factors: EmissionFactorsModuleInterface = EmissionFactorsModuleInterface(self)
         self.keys: KeysModuleInterface = KeysModuleInterface(self)
         self.measurements: MeasurementsModuleInterface = MeasurementsModuleInterface(self)
@@ -42,6 +46,8 @@ class CarbonAltDeleteClient:
         self.reporting_periods: ReportingPeriodsModuleInterface = ReportingPeriodsModuleInterface(self)
         self.reports: ReportsModuleInterface = ReportsModuleInterface(self)
         self.results: ResultsModuleInterface = ResultsModuleInterface(self)
+        self.tags: TagsModuleInterface = TagsModuleInterface(self)
+        self.uncertainties: UncertaintiesModuleInterface = UncertaintiesModuleInterface(self)
 
         # config
         self.timeout = 15000

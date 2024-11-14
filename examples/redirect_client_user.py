@@ -43,5 +43,5 @@ def redirect_client_user():
 
 
 if __name__ == "__main__":
-    load_dotenv()
+    load_dotenv("localhost.env")
     redirect_client_user()
