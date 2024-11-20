@@ -8,15 +8,13 @@ from carbon_alt_delete.emission_factors.enums.reporting_split import ReportingSp
 
 class EmissionFactorCreate(BaseModel):
     description: str
-    dataset_id: UUID
+    dataset_id: UUID = Field(alias="datasetId")
     #
     stage_detail: EmissionFactorValueStageDetail = Field(alias="stageDetail")
     reporting_split: ReportingSplit = Field(alias="reportingSplit")
     keyword: str | None
     attribute: str | None
-    unit: str | None
-    # emission_calculation_type: EmissionCalculationType = Field(alias="emissionCalculationType")
-    # stage: EmissionFactorValueStage
+    unit_id: UUID | None = Field(alias="unitId")
 
     model_config = ConfigDict(
         populate_by_name=True,

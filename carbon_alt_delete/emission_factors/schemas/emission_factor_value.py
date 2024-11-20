@@ -28,7 +28,6 @@ class EmissionFactorValue(EmissionFactorValueUpdate):
     valid_from: datetime.date = Field(alias="validFrom")
     valid_to: datetime.date = Field(alias="validTo")
 
-    unit: str | None
     emission_factor_id: UUID = Field(alias="emissionFactorId")
     referring_emission_factor_id: UUID | None = Field(alias="referringEmissionFactorId", default=None)
 

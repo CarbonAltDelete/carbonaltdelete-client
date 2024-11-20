@@ -24,6 +24,7 @@ from carbon_alt_delete.results.results_module_interface import ResultsModuleInte
 from comments.comments_module_interface import CommentsModuleInterface
 from tags.tags_module_interface import TagsModuleInterface
 from uncertainties.uncertainties_module_interface import UncertaintiesModuleInterface
+from units.units_module_interface import UnitsModuleInterface
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -48,6 +49,7 @@ class CarbonAltDeleteClient:
         self.results: ResultsModuleInterface = ResultsModuleInterface(self)
         self.tags: TagsModuleInterface = TagsModuleInterface(self)
         self.uncertainties: UncertaintiesModuleInterface = UncertaintiesModuleInterface(self)
+        self.units: UnitsModuleInterface = UnitsModuleInterface(self)
 
         # config
         self.timeout = 15000
