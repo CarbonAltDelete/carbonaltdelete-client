@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-RELEASE = "v2024.11.1"
+RELEASE = "v2024.11.2"
 setup(
     name="Carbon+Alt+Delete Client",
     version=RELEASE[1:],
