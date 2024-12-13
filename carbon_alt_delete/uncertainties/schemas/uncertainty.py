@@ -2,7 +2,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from uncertainties.enums.model_type import ModelType
+from carbon_alt_delete.uncertainties.enums.model_type import ModelType
 
 
 class UncertaintyCreate(BaseModel):

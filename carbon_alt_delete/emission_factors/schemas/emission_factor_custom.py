@@ -20,5 +20,5 @@ class EmissionFactorCustomUpdate(EmissionFactorUpdate):
 
 class EmissionFactorCustom(EmissionFactor):
     description: str | None  # type: ignore[assignment]
-    uncertainty_id: UUID = Field(alias="uncertaintyId")
+    uncertainty_id: UUID | None = Field(alias="uncertaintyId", default=None)
     company_id: UUID = Field(alias="companyId")

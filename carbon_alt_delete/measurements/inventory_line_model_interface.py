@@ -3,7 +3,7 @@ from uuid import UUID
 
 from carbon_alt_delete.client.model_interface import ModelInterface
 from carbon_alt_delete.measurements.schemas.inventory_line import InventoryLine, InventoryLinePatch
-from measurements.schemas.measurement import MeasurementCreate
+from carbon_alt_delete.measurements.schemas.measurement import MeasurementCreate
 
 
 class InventoryLineModelInterface(ModelInterface[InventoryLine]):
