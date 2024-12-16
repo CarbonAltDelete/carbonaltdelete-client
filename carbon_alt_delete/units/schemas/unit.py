@@ -1,12 +1,12 @@
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, NonNegativeInt
+from pydantic import BaseModel, ConfigDict, Field, NonNegativeFloat
 
 
 class UnitCreate(BaseModel):
     # Fields
     name: str
-    sequence: NonNegativeInt
+    sequence: NonNegativeFloat
     visible: bool
 
 

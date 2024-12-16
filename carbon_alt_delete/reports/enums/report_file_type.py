@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class ReportFileType(str, Enum):
+class ReportFileType(StrEnum):
     PDF = "PDF"
     XLSX = "XLSX"
     DOCX = "DOCX"

@@ -10,7 +10,7 @@ class EmissionFactorCustomModelInterface(ModelInterface[EmissionFactorCustom]):
     def __init__(self, client, module):
         super().__init__(client, module, EmissionFactorCustom)
 
-    def create(self, url: str = None, **kwargs) -> EmissionFactorCustom:
+    def create(self, url: str | None = None, **kwargs) -> EmissionFactorCustom:
         url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/emission-factors"
         response = self.client.post(
             url,
@@ -40,3 +40,11 @@ class EmissionFactorCustomModelInterface(ModelInterface[EmissionFactorCustom]):
         )
 
         return response.json()
+
+    def regenerate_fingerprint(self, emission_factor_id: UUID) -> str:
+        url = f"{self.client.server}/api/{self.module.name}/{self.module.version}/emission-factors/{emission_factor_id}/regenerate-fingerprint"
+        response = self.client.put(
+            url,
+        )
+
+        return response.json()["fingerprint"]

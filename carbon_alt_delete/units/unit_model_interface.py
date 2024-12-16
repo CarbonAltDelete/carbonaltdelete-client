@@ -1,5 +1,5 @@
 from carbon_alt_delete.client.model_interface import ModelInterface
-from units.schemas.unit import Unit
+from carbon_alt_delete.units.schemas.unit import Unit
 
 
 class UnitModelInterface(ModelInterface[Unit]):

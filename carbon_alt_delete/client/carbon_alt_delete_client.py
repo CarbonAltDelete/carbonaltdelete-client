@@ -12,6 +12,7 @@ from carbon_alt_delete.accounts.schemas.company import Company
 from carbon_alt_delete.accounts.schemas.user import User
 from carbon_alt_delete.activities.activities_module_interface import ActivitiesModuleInterface
 from carbon_alt_delete.client.exceptions import ClientException
+from carbon_alt_delete.comments.comments_module_interface import CommentsModuleInterface
 from carbon_alt_delete.emission_factors.emission_factors_module_interface import EmissionFactorsModuleInterface
 from carbon_alt_delete.keys.keys_module_interface import KeysModuleInterface
 from carbon_alt_delete.measurements.measurements_module_interface import MeasurementsModuleInterface
@@ -21,10 +22,9 @@ from carbon_alt_delete.organizational_units.organizational_units_module_interfac
 from carbon_alt_delete.reporting_periods.reporting_periods_module_interface import ReportingPeriodsModuleInterface
 from carbon_alt_delete.reports.reports_module_interface import ReportsModuleInterface
 from carbon_alt_delete.results.results_module_interface import ResultsModuleInterface
-from comments.comments_module_interface import CommentsModuleInterface
-from tags.tags_module_interface import TagsModuleInterface
-from uncertainties.uncertainties_module_interface import UncertaintiesModuleInterface
-from units.units_module_interface import UnitsModuleInterface
+from carbon_alt_delete.tags.tags_module_interface import TagsModuleInterface
+from carbon_alt_delete.uncertainties.uncertainties_module_interface import UncertaintiesModuleInterface
+from carbon_alt_delete.units.units_module_interface import UnitsModuleInterface
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -193,7 +193,6 @@ class CarbonAltDeleteClient:
         return response
 
     def get(self, url: str, params: dict | None = None, **kwargs) -> Response:
-
         if kwargs.get("check_refresh", True):
             self._check_refresh()
         logger.debug(f"GET {url}")
@@ -305,7 +304,6 @@ class CarbonAltDeleteClient:
             self._client_company = self.accounts.companies.one(id=UUID(hex=company_id), check_refresh=False)
 
     def _check_refresh(self):
-
         expiry_time: int | None = jwt.get_unverified_claims(self._authentication_token).get("exp", None)
         current_time: float = datetime.now().timestamp()
 

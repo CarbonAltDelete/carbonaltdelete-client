@@ -16,6 +16,8 @@ class EmissionFactorCreate(BaseModel):
     attribute: str | None
     unit_id: UUID | None = Field(alias="unitId")
 
+    fingerprint: str
+
     model_config = ConfigDict(
         populate_by_name=True,
         from_attributes=True,
