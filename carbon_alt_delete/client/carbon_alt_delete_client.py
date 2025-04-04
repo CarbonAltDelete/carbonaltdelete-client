@@ -3,27 +3,40 @@ from datetime import datetime
 from http import HTTPStatus
 from uuid import UUID
 
+import jwt
 import requests
-from jose import jwt
 from requests.models import Response
 
 from carbon_alt_delete.accounts.accounts_module_interface import AccountsModuleInterface
 from carbon_alt_delete.accounts.schemas.company import Company
 from carbon_alt_delete.accounts.schemas.user import User
-from carbon_alt_delete.activities.activities_module_interface import ActivitiesModuleInterface
+from carbon_alt_delete.activities.activities_module_interface import (
+    ActivitiesModuleInterface,
+)
 from carbon_alt_delete.client.exceptions import ClientException
 from carbon_alt_delete.comments.comments_module_interface import CommentsModuleInterface
-from carbon_alt_delete.emission_factors.emission_factors_module_interface import EmissionFactorsModuleInterface
+from carbon_alt_delete.documents.documents_module_interface import (
+    DocumentsModuleInterface,
+)
+from carbon_alt_delete.emission_factors.emission_factors_module_interface import (
+    EmissionFactorsModuleInterface,
+)
 from carbon_alt_delete.keys.keys_module_interface import KeysModuleInterface
-from carbon_alt_delete.measurements.measurements_module_interface import MeasurementsModuleInterface
+from carbon_alt_delete.measurements.measurements_module_interface import (
+    MeasurementsModuleInterface,
+)
 from carbon_alt_delete.organizational_units.organizational_units_module_interface import (
     OrganizationalUnitsModuleInterface,
 )
-from carbon_alt_delete.reporting_periods.reporting_periods_module_interface import ReportingPeriodsModuleInterface
+from carbon_alt_delete.reporting_periods.reporting_periods_module_interface import (
+    ReportingPeriodsModuleInterface,
+)
 from carbon_alt_delete.reports.reports_module_interface import ReportsModuleInterface
 from carbon_alt_delete.results.results_module_interface import ResultsModuleInterface
 from carbon_alt_delete.tags.tags_module_interface import TagsModuleInterface
-from carbon_alt_delete.uncertainties.uncertainties_module_interface import UncertaintiesModuleInterface
+from carbon_alt_delete.uncertainties.uncertainties_module_interface import (
+    UncertaintiesModuleInterface,
+)
 from carbon_alt_delete.units.units_module_interface import UnitsModuleInterface
 
 logger = logging.getLogger(__name__)
@@ -40,15 +53,26 @@ class CarbonAltDeleteClient:
         self.accounts: AccountsModuleInterface = AccountsModuleInterface(self)
         self.activities: ActivitiesModuleInterface = ActivitiesModuleInterface(self)
         self.comments: CommentsModuleInterface = CommentsModuleInterface(self)
-        self.emission_factors: EmissionFactorsModuleInterface = EmissionFactorsModuleInterface(self)
+        self.documents: DocumentsModuleInterface = DocumentsModuleInterface(self)
+        self.emission_factors: EmissionFactorsModuleInterface = (
+            EmissionFactorsModuleInterface(self)
+        )
         self.keys: KeysModuleInterface = KeysModuleInterface(self)
-        self.measurements: MeasurementsModuleInterface = MeasurementsModuleInterface(self)
-        self.organizational_units: OrganizationalUnitsModuleInterface = OrganizationalUnitsModuleInterface(self)
-        self.reporting_periods: ReportingPeriodsModuleInterface = ReportingPeriodsModuleInterface(self)
+        self.measurements: MeasurementsModuleInterface = MeasurementsModuleInterface(
+            self,
+        )
+        self.organizational_units: OrganizationalUnitsModuleInterface = (
+            OrganizationalUnitsModuleInterface(self)
+        )
+        self.reporting_periods: ReportingPeriodsModuleInterface = (
+            ReportingPeriodsModuleInterface(self)
+        )
         self.reports: ReportsModuleInterface = ReportsModuleInterface(self)
         self.results: ResultsModuleInterface = ResultsModuleInterface(self)
         self.tags: TagsModuleInterface = TagsModuleInterface(self)
-        self.uncertainties: UncertaintiesModuleInterface = UncertaintiesModuleInterface(self)
+        self.uncertainties: UncertaintiesModuleInterface = UncertaintiesModuleInterface(
+            self,
+        )
         self.units: UnitsModuleInterface = UnitsModuleInterface(self)
 
         # config
@@ -286,25 +310,50 @@ class CarbonAltDeleteClient:
         print("Carbon+Alt+Delete Client")
         print("-" * 80)
         print(f"Server:     {self.server}")
-        print(f"Status:     {'Connected' if self.authentication_token else 'Missing Token'}")
+        print(
+            f"Status:     {'Connected' if self.authentication_token else 'Missing Token'}",
+        )
         print("-" * 80)
-        print(f"User:       {self.user.first_name} {self.user.last_name} <{self.user.email}>")
+        print(
+            f"User:       {self.user.first_name} {self.user.last_name} <{self.user.email}>",
+        )
         print(f"Company:    {self.company.name}")
         print(f"Client:     {self.client_company.name if self.client_company else '-'}")
         print("=" * 80)
 
     def _get_token_info(self):
-        token_data = jwt.get_unverified_claims(self._authentication_token)
+        if self._authentication_token is None:
+            raise Exception("Authentication token not set")
+        token_data = jwt.decode(
+            self._authentication_token,
+            algorithms=["HS256"],
+            options={"verify_signature": False},
+        )
         user_id = token_data.get("userId", None)
         company_id = token_data.get("com", None)
 
         self._user = self.accounts.users.one(id=UUID(hex=user_id), check_refresh=False)
-        self._company = self.accounts.companies.one(id=self._user.company_id, check_refresh=False)
+        if self._user is None:
+            raise Exception("User not found")
+        self._company = self.accounts.companies.one(
+            id=self._user.company_id,
+            check_refresh=False,
+        )
         if company_id:
-            self._client_company = self.accounts.companies.one(id=UUID(hex=company_id), check_refresh=False)
+            self._client_company = self.accounts.companies.one(
+                id=UUID(hex=company_id),
+                check_refresh=False,
+            )
 
     def _check_refresh(self):
-        expiry_time: int | None = jwt.get_unverified_claims(self._authentication_token).get("exp", None)
+        if self._authentication_token is None:
+            raise Exception("Authentication token not set")
+
+        expiry_time: int | None = jwt.decode(
+            self._authentication_token,
+            algorithms=["HS256"],
+            options={"verify_signature": False},
+        ).get("exp", None)
         current_time: float = datetime.now().timestamp()
 
         if expiry_time is None or expiry_time < current_time + 60:

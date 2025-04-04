@@ -11,3 +11,8 @@ venv-test
 /usage/*.txt
 /examples/*.pdf
 /examples/*.xlsx
+
+.pytest_cache
+.mypy_cache
+.venv
+.vscode
