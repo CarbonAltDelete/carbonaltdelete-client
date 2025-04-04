@@ -1,9 +1,10 @@
+import logging
 import os
-
-from dotenv import load_dotenv
 
 from carbon_alt_delete.client.carbon_alt_delete_client import CarbonAltDeleteClient
 from carbon_alt_delete.client.connect import connect
+
+logger = logging.getLogger(__name__)
 
 
 def list_all_companies():
@@ -13,37 +14,43 @@ def list_all_companies():
         password=os.getenv("PASSWORD"),
         server=os.getenv("SERVER"),
     ) as client:
-        print("\nAll companies")
+        logger.info("All companies")
         for c in client.accounts.companies.all(refresh=True):
-            print(c)
+            logger.info(c)
 
-        print("\nClient companies")
+        logger.info("Client companies")
         for c in client.accounts.companies.all(is_consulting_company=False):
-            print(c)
+            logger.info(c)
             client_company_id = c.id
             client_company_name = c.name
 
-        print("\nDemo companies")
+        logger.info("Demo companies")
         for c in client.accounts.companies.all(is_demo_company=True):
-            print(c)
+            logger.info(c)
 
-        print("\nOne company")
-        print(client.accounts.companies.one(name=client_company_name, is_consulting_company=False))
+        logger.info("One company")
+        logger.info(
+            client.accounts.companies.one(
+                name=client_company_name,
+                is_consulting_company=False,
+            ),
+        )
 
         client.switch(client_company_id)
 
-        print("\nReporting periods")
+        logger.info("Reporting periods")
         for r in client.reporting_periods.reporting_periods.all():
-            print(r)
+            logger.info(r)
 
-        print("\nOrganizational Units")
+        logger.info("Organizational Units")
         for r in client.organizational_units.organizational_units.all():
-            print(r)
+            logger.info(r)
 
-        print("\nRoot Organizational Unit")
-        print(client.organizational_units.organizational_units.root_organizational_unit())
+        logger.info("Root Organizational Unit")
+        logger.info(
+            client.organizational_units.organizational_units.root_organizational_unit(),
+        )
 
 
 if __name__ == "__main__":
-    load_dotenv()
     list_all_companies()

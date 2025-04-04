@@ -1,6 +1,6 @@
 from carbon_alt_delete.client.module_interface import ModuleInterface
-from units.unit_class_model_interface import UnitClassModelInterface
-from units.unit_model_interface import UnitModelInterface
+from carbon_alt_delete.units.unit_class_model_interface import UnitClassModelInterface
+from carbon_alt_delete.units.unit_model_interface import UnitModelInterface
 
 
 class UnitsModuleInterface(ModuleInterface):

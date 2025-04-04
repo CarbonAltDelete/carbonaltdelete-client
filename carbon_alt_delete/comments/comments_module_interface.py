@@ -1,5 +1,5 @@
 from carbon_alt_delete.client.module_interface import ModuleInterface
-from comments.comment_model_interface import CommentModelInterface
+from carbon_alt_delete.comments.comment_model_interface import CommentModelInterface
 
 
 class CommentsModuleInterface(ModuleInterface):

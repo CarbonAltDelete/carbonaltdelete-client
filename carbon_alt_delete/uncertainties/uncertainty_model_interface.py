@@ -1,5 +1,5 @@
 from carbon_alt_delete.client.model_interface import ModelInterface
-from uncertainties.schemas.uncertainty import Uncertainty
+from carbon_alt_delete.uncertainties.schemas.uncertainty import Uncertainty
 
 
 class UncertaintyModelInterface(ModelInterface[Uncertainty]):

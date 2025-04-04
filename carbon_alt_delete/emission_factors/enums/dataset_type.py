@@ -2,7 +2,6 @@ from enum import Enum
 
 
 class DatasetType(str, Enum):
-
     FUELS = "FUELS"
     INDUSTRIAL_EMISSIONS = "INDUSTRIAL_EMISSIONS"
     ELECTRICITY = "ELECTRICITY"
@@ -15,5 +14,6 @@ class DatasetType(str, Enum):
 
     BASE = "BASE"
     ECOINVENT = "ECOINVENT"
+    EPA = "EPA"
     EXIOBASE = "EXIOBASE"
     CUSTOM = "CUSTOM"

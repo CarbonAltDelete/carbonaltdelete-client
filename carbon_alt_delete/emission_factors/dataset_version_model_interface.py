@@ -1,5 +1,5 @@
 from carbon_alt_delete.client.model_interface import ModelInterface
-from emission_factors.schemas.dataset_version import DatasetVersion
+from carbon_alt_delete.emission_factors.schemas.dataset_version import DatasetVersion
 
 
 class DatasetVersionModelInterface(ModelInterface[DatasetVersion]):
